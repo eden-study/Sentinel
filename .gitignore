@@ -1,0 +1,73 @@
+# Java
+*.class
+*.db
+*.ear
+*.jar
+*.war
+
+# Intellij
+.idea/
+classes/
+*.ids
+*.iml
+*.ipr
+*.iws
+*.orig
+
+# Eclipse
+.settings/
+.classpath
+.factorypath
+.loadpath
+.metadata
+.project
+*.bak
+*.launch
+*.pydevproject
+*.swp
+*.tmp
+*~.nib
+local.properties
+
+# Visual Studio Code
+.vscode/
+
+# JRebel
+rebel.xml
+
+# Maven
+!.mvn/wrapper/maven-wrapper.jar
+!maven/wrapper/maven-wrapper.jar
+maven/
+target/
+.flattened-pom.xml
+release.properties
+
+# Gradle
+!gradle/wrapper/maven-wrapper.jar
+.gradle/
+build/
+
+# SVN
+.svn/
+
+# Mac OSX
+.DS_Store
+
+# Windows
+._*
+*.*~
+*~
+.merge_file*
+Desktop.ini
+Thumbs.db
+
+# Others
+logs/
+log/
+.log
+.buildpath
+.cproject
+.externalToolBuilders/**
+.Spotlight-V100
+.Trashes
