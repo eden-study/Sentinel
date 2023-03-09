@@ -42,6 +42,7 @@ maven/
 target/
 .flattened-pom.xml
 release.properties
+pom.xml.releaseBackup
 
 # Gradle
 !gradle/wrapper/maven-wrapper.jar
