@@ -1,2 +1,0 @@
-dubbo.application.context.name.filter=com.alibaba.csp.sentinel.adapter.dubbo3.DubboAppContextFilter
-sentinel.dubbo.consumer.filter=com.alibaba.csp.sentinel.adapter.dubbo3.SentinelDubboConsumerFilter

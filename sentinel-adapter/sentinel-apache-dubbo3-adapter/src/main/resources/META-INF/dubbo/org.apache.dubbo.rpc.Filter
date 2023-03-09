@@ -1,1 +1,0 @@
-sentinel.dubbo.provider.filter=com.alibaba.csp.sentinel.adapter.dubbo3.SentinelDubboProviderFilter

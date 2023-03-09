@@ -1,2 +1,0 @@
-com.alibaba.csp.sentinel.demo.commandhandler.interceptor.EchoCommandHandlerInterceptor
-com.alibaba.csp.sentinel.demo.commandhandler.interceptor.AllCommandHandlerInterceptor
