@@ -35,11 +35,6 @@
             <artifactId>logback-classic</artifactId>
             <version>1.2.11</version>
         </dependency>
-
-		<dependency>
-			<groupId>com.alibaba.csp</groupId>
-			<artifactId>sentinel-transport-simple-http</artifactId>
-		</dependency>
     </dependencies>
 
 </project>

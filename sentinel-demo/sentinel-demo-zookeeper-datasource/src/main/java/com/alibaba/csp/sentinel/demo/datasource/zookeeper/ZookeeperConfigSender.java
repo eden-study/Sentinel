@@ -24,7 +24,7 @@ public class ZookeeperConfigSender {
                 + "  {\n"
                 + "    \"resource\": \"TestResource\",\n"
                 + "    \"controlBehavior\": 0,\n"
-                + "    \"count\": 11.0,\n"
+                + "    \"count\": 10.0,\n"
                 + "    \"grade\": 1,\n"
                 + "    \"limitApp\": \"default\",\n"
                 + "    \"strategy\": 0\n"

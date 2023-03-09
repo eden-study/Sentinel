@@ -15,6 +15,9 @@
  */
 package com.alibaba.csp.sentinel.demo.datasource.nacos;
 
+import java.util.List;
+import java.util.Properties;
+
 import com.alibaba.csp.sentinel.datasource.ReadableDataSource;
 import com.alibaba.csp.sentinel.datasource.nacos.NacosDataSource;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
@@ -22,9 +25,6 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.nacos.api.PropertyKeyConst;
-
-import java.util.List;
-import java.util.Properties;
 
 /**
  * This demo demonstrates how to use Nacos as the data source of Sentinel rules.
@@ -37,18 +37,17 @@ public class NacosDataSourceDemo {
 
     private static final String KEY = "TestResource";
     // nacos server ip
-    private static final String remoteAddress = "10.2.2.47:8848";
+    private static final String remoteAddress = "localhost:8848";
     // nacos group
-    private static final String groupId = "sentinel";
+    private static final String groupId = "Sentinel_Demo";
     // nacos dataId
-    private static final String dataId = "com.alibaba.csp.sentinel.demo.datasource.nacos.NacosDataSourceDemo-flow-rule";
+    private static final String dataId = "com.alibaba.csp.sentinel.demo.flow.rule";
     // if change to true, should be config NACOS_NAMESPACE_ID
     private static boolean isDemoNamespace = false;
     // fill your namespace id,if you want to use namespace. for example: 0f5c7314-4983-4022-ad5a-347de1d1057d,you can get it on nacos's console
-    private static final String NACOS_NAMESPACE_ID = "demo";
+    private static final String NACOS_NAMESPACE_ID = "${namespace}";
 
     public static void main(String[] args) {
-		System.setProperty("csp.sentinel.dashboard.server", "127.0.0.1:8090");
         if (isDemoNamespace) {
             loadMyNamespaceRules();
         } else {
@@ -56,7 +55,7 @@ public class NacosDataSourceDemo {
         }
 
         // Assume we config: resource is `TestResource`, initial QPS threshold is 5.
-        FlowQpsRunner runner = new FlowQpsRunner(KEY, 50, 36000);
+        FlowQpsRunner runner = new FlowQpsRunner(KEY, 1, 100);
         runner.simulateTraffic();
         runner.tick();
     }

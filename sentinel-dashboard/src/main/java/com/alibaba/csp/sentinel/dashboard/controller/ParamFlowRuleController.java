@@ -16,12 +16,10 @@
 package com.alibaba.csp.sentinel.dashboard.controller;
 
 import com.alibaba.csp.sentinel.dashboard.auth.AuthAction;
-import com.alibaba.csp.sentinel.dashboard.auth.AuthService;
 import com.alibaba.csp.sentinel.dashboard.auth.AuthService.PrivilegeType;
 import com.alibaba.csp.sentinel.dashboard.client.CommandNotFoundException;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.SentinelVersion;
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.ParamFlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
@@ -40,7 +38,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -122,7 +119,7 @@ public class ParamFlowRuleController {
     }
 
     @PostMapping("/rule")
-    @AuthAction(AuthService.PrivilegeType.WRITE_RULE)
+    @AuthAction(PrivilegeType.WRITE_RULE)
     public Result<ParamFlowRuleEntity> apiAddParamFlowRule(@RequestBody ParamFlowRuleEntity entity) {
         Result<ParamFlowRuleEntity> checkResult = checkEntityInternal(entity);
         if (checkResult != null) {
@@ -191,7 +188,7 @@ public class ParamFlowRuleController {
     }
 
     @PutMapping("/rule/{id}")
-    @AuthAction(AuthService.PrivilegeType.WRITE_RULE)
+    @AuthAction(PrivilegeType.WRITE_RULE)
     public Result<ParamFlowRuleEntity> apiUpdateParamFlowRule(@PathVariable("id") Long id,
                                                               @RequestBody ParamFlowRuleEntity entity) {
         if (id == null || id <= 0) {

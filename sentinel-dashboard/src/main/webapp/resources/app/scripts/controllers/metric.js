@@ -59,9 +59,8 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 
 		// 数据自动刷新频率
 		$scope.autoRefresh=true;
-		$scope.refreshInterval = 1000 * 10;
+		$scope.refreshInterval = 1000 * 15;
 		$scope.refreshItems = [
-			{val : 10, text : "10秒刷新"},
 			{val : 15, text : "15秒刷新"},
 			{val : 30, text : "30秒刷新"},
 			{val : 60, text : "60秒刷新"},

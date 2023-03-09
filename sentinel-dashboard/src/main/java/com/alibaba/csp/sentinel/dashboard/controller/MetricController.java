@@ -61,10 +61,10 @@ public class MetricController {
             pageIndex = 1;
         }
         if (pageSize == null) {
-            pageSize = 10;
+            pageSize = 5;
         }
-        if (pageSize >= 20) {
-            pageSize = 20;
+        if (pageSize >= 5) {
+            pageSize = 5;
         }
         if (desc == null) {
             desc = true;
@@ -104,8 +104,8 @@ public class MetricController {
         final Map<String, Iterable<MetricVo>> map = new ConcurrentHashMap<>();
         long time = System.currentTimeMillis();
 
-		if (logger.isInfoEnabled()) {
-			logger.info("queryByAppAndResourceBetween {} and {}",
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryByAppAndResourceBetween {} and {}",
 				DateFormatUtils.format(new Date(startTime),
 					"yyyy-MM-dd HH:mm:ss", Locale.CHINA),
 				DateFormatUtils.format(new Date(endTime),

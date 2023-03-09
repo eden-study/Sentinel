@@ -15,17 +15,15 @@
  */
 package com.alibaba.csp.sentinel.dashboard.discovery;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-
 import com.alibaba.csp.sentinel.util.StringUtil;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class AppManagement implements MachineDiscovery {
@@ -49,7 +47,7 @@ public class AppManagement implements MachineDiscovery {
     public long addMachine(MachineInfo machineInfo) {
         return machineDiscovery.addMachine(machineInfo);
     }
-    
+
     @Override
     public boolean removeMachine(String app, String ip, int port) {
         return machineDiscovery.removeMachine(app, ip, port);
@@ -64,7 +62,7 @@ public class AppManagement implements MachineDiscovery {
     public AppInfo getDetailApp(String app) {
         return machineDiscovery.getDetailApp(app);
     }
-    
+
     @Override
     public void removeApp(String app) {
         machineDiscovery.removeApp(app);

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
     <groupId>com.alibaba.csp</groupId>
     <artifactId>sentinel-parent</artifactId>
     <version>1.8.6-SNAPSHOT</version>
@@ -11,6 +11,7 @@
     <name>${project.artifactId}</name>
     <description>The parent project of Sentinel</description>
     <url>https://github.com/alibaba/Sentinel</url>
+
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -18,11 +19,13 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
     <scm>
         <url>https://github.com/alibaba/Sentinel</url>
         <connection>scm:git:https://github.com/alibaba/Sentinel.git</connection>
         <developerConnection>scm:git:https://github.com/alibaba/Sentinel.git</developerConnection>
     </scm>
+
     <developers>
         <developer>
             <name>The Sentinel Project Contributors</name>
@@ -30,10 +33,12 @@
             <url>https://github.com/alibaba/Sentinel</url>
         </developer>
     </developers>
+
     <organization>
         <name>Alibaba Group</name>
         <url>https://github.com/alibaba</url>
     </organization>
+
     <issueManagement>
         <system>github</system>
         <url>https://github.com/alibaba/Sentinel/issues</url>
@@ -53,7 +58,6 @@
 
         <!-- Build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
         <java.source.version>1.8</java.source.version>
         <java.target.version>1.8</java.target.version>
         <java.encoding>UTF-8</java.encoding>
@@ -66,6 +70,9 @@
         <maven.jacoco.version>0.8.3</maven.jacoco.version>
         <maven.jar.version>3.1.0</maven.jar.version>
         <maven.pmd.version>3.8</maven.pmd.version>
+		<maven-release-plugin.version>3.0.0-M7</maven-release-plugin.version>
+		<versions-maven-plugin.version>2.7</versions-maven-plugin.version>
+		<git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
     </properties>
 
     <modules>
@@ -165,13 +172,13 @@
                 <artifactId>sentinel-adapter</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.alibaba.csp</groupId>
                 <artifactId>sentinel-metric-exporter</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
@@ -225,6 +232,45 @@
 
     <build>
         <plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<version>${versions-maven-plugin.version}</version>
+				<configuration>
+					<generateBackupPoms>false</generateBackupPoms>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>${maven-release-plugin.version}</version>
+				<configuration>
+					<tagNameFormat>v@{project.version}</tagNameFormat>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>${git-commit-id-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<failOnNoGitDirectory>false</failOnNoGitDirectory>
+					<failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
+					<generateGitPropertiesFile>true</generateGitPropertiesFile>
+					<includeOnlyProperties>
+						<includeOnlyProperty>^git.commit.id.abbrev$</includeOnlyProperty>
+						<includeOnlyProperty>^git.commit.id.describe$</includeOnlyProperty>
+						<includeOnlyProperty>^git.branch$</includeOnlyProperty>
+					</includeOnlyProperties>
+				</configuration>
+			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>

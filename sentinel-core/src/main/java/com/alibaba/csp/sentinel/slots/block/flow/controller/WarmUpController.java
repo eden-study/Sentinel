@@ -112,28 +112,23 @@ public class WarmUpController implements TrafficShapingController {
 
     @Override
     public boolean canPass(Node node, int acquireCount, boolean prioritized) {
-		// 获取当前的 QPS
         long passQps = (long) node.passQps();
-		// 获取上个滑动窗口的 QPS
+
         long previousQps = (long) node.previousPassQps();
-		// 生成 Token
         syncToken(previousQps);
 
         // 开始计算它的斜率
-        // 如果进入了警戒线，开始调整他的 QPS
+        // 如果进入了警戒线，开始调整他的qps
         long restToken = storedTokens.get();
-		// 如果令牌桶的 Token 大于警戒线，说明预热还未结束
         if (restToken >= warningToken) {
             long aboveToken = restToken - warningToken;
+            // 消耗的速度要比warning快，但是要比慢
             // current interval = restToken*slope+1/count
-			// 计算 1s 内生成 Token 的数量
             double warningQps = Math.nextUp(1.0 / (aboveToken * slope + 1.0 / count));
-			// 如果 Token 的消费速度小于生成速度，pass
             if (passQps + acquireCount <= warningQps) {
                 return true;
             }
         } else {
-			// 预热结束，判断是否超过设置的阈值
             if (passQps + acquireCount <= count) {
                 return true;
             }

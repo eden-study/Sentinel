@@ -17,8 +17,6 @@ import com.alibaba.fastjson.TypeReference;
 public class ZookeeperDataSourceDemo {
 
     public static void main(String[] args) {
-		System.setProperty("csp.sentinel.dashboard.server", "127.0.0.1:8080");
-
         // 使用zookeeper的场景
         loadRules();
 

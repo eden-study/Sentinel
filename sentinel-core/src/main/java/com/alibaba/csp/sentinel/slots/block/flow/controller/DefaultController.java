@@ -49,13 +49,11 @@ public class DefaultController implements TrafficShapingController {
     public boolean canPass(Node node, int acquireCount, boolean prioritized) {
         int curCount = avgUsedTokens(node);
         if (curCount + acquireCount > count) {
-			// 在 QPS 大于阈值的情况下，会对先进来的请求进行特殊处理
             if (prioritized && grade == RuleConstant.FLOW_GRADE_QPS) {
                 long currentTime;
                 long waitInMs;
                 currentTime = TimeUtil.currentTimeMillis();
                 waitInMs = node.tryOccupyNext(currentTime, acquireCount, count);
-				// 如果策略是 QPS，那么对于优先请求尝试去占用下一个时间窗口中的令牌
                 if (waitInMs < OccupyTimeoutProperty.getOccupyTimeout()) {
                     node.addWaitingRequest(currentTime + waitInMs, acquireCount);
                     node.addOccupiedPass(acquireCount);
