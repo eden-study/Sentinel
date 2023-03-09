@@ -12,37 +12,35 @@
     <description>The parent project of Sentinel</description>
     <url>https://github.com/alibaba/Sentinel</url>
 
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+	<developers>
+		<developer>
+			<id>sion</id>
+			<name>梦想歌</name>
+			<email>shiyindaxiaojie@gmail.com</email>
+			<roles>
+				<role>Architect</role>
+			</roles>
+		</developer>
+	</developers>
 
-    <scm>
-        <url>https://github.com/alibaba/Sentinel</url>
-        <connection>scm:git:https://github.com/alibaba/Sentinel.git</connection>
-        <developerConnection>scm:git:https://github.com/alibaba/Sentinel.git</developerConnection>
-    </scm>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
-    <developers>
-        <developer>
-            <name>The Sentinel Project Contributors</name>
-            <email>sentinel-dev@linux.alibaba.com</email>
-            <url>https://github.com/alibaba/Sentinel</url>
-        </developer>
-    </developers>
+	<scm>
+		<url>https://github.com/shiyindaxiaojie/sentinel</url>
+		<connection>scm:git:git://github.com/shiyindaxiaojie/sentinel.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/shiyindaxiaojie/sentinel.git</developerConnection>
+	</scm>
 
-    <organization>
-        <name>Alibaba Group</name>
-        <url>https://github.com/alibaba</url>
-    </organization>
-
-    <issueManagement>
-        <system>github</system>
-        <url>https://github.com/alibaba/Sentinel/issues</url>
-    </issueManagement>
+	<issueManagement>
+		<system>Github</system>
+		<url>https://github.com/shiyindaxiaojie/sentinel/issues</url>
+	</issueManagement>
 
     <properties>
         <!-- Compile libs -->
