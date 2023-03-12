@@ -22,7 +22,7 @@ Sentinel 是阿里巴巴开源的流量治理平台，提供了 `流量控制`�
 1. 引入 Sentinel 依赖
 ````xml
 <dependency>
-    <groupId>org.ylzl</groupId>
+    <groupId>io.github.shiyindaxiaojie</groupId>
     <artifactId>eden-sentinel-spring-cloud-starter</artifactId>
 </dependency>
 ````
