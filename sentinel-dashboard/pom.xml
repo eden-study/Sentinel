@@ -454,54 +454,55 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>${jib-maven-plugin.version}</version>
-                <configuration>
-                    <from>
-                        <image>openjdk:11-jre-slim</image>
-                    </from>
-                    <to>
-                        <image>${docker.image}</image>
-                        <auth>
-                            <username>${docker.username}</username>
-                            <password>${docker.password}</password>
-                        </auth>
-                        <tags>
-                            <tag>${project.version}</tag>
-                        </tags>
-                    </to>
-                    <container>
-                        <entrypoint>
-                            <shell>bash</shell>
-                            <option>-c</option>
-                            <arg>/entrypoint.sh</arg>
-                        </entrypoint>
-                        <ports>
-                            <port>8080</port>
-                        </ports>
-                        <environment>
-                            <TZ>Asia/Shanghai</TZ>
-                            <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
-                            <JAVA_SLEEP>1</JAVA_SLEEP>
-                            <JAVA_OPTS>-Xms256m -Xmx256m</JAVA_OPTS>
-                        </environment>
-                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-                        <mainClass>${start-class}</mainClass>
-                    </container>
-                    <extraDirectories>
-                        <paths>src/main/docker</paths>
-                        <permissions>
-                            <permission>
-                                <file>/entrypoint.sh</file>
-                                <mode>755</mode>
-                            </permission>
-                        </permissions>
-                    </extraDirectories>
-                    <allowInsecureRegistries>true</allowInsecureRegistries>
-                </configuration>
-            </plugin>
+			<!-- 容器化部署 -->
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>${jib-maven-plugin.version}</version>
+				<configuration>
+					<from>
+						<image>openjdk:11-jre-slim</image>
+					</from>
+					<to>
+						<image>${docker.image}</image>
+						<auth>
+							<username>${docker.username}</username>
+							<password>${docker.password}</password>
+						</auth>
+						<tags>
+							<tag>${project.version}</tag>
+						</tags>
+					</to>
+					<container>
+						<entrypoint>
+							<shell>bash</shell>
+							<option>-c</option>
+							<arg>/entrypoint.sh</arg>
+						</entrypoint>
+						<ports>
+							<port>9999</port>
+						</ports>
+						<environment>
+							<TZ>Asia/Shanghai</TZ>
+							<SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
+							<JAVA_SLEEP>1</JAVA_SLEEP>
+							<JAVA_OPTS>-Xms256m -Xmx256m</JAVA_OPTS>
+						</environment>
+						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+						<mainClass>${start-class}</mainClass>
+					</container>
+					<extraDirectories>
+						<paths>src/main/docker</paths>
+						<permissions>
+							<permission>
+								<file>/entrypoint.sh</file>
+								<mode>755</mode>
+							</permission>
+						</permissions>
+					</extraDirectories>
+					<allowInsecureRegistries>true</allowInsecureRegistries>
+				</configuration>
+			</plugin>
         </plugins>
 
         <resources>
