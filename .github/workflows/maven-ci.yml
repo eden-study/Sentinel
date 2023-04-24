@@ -47,7 +47,7 @@ jobs:
 
       - name: Publish to Docker Hub
         run: |
-          echo "<settings><profiles><profile><id>github</id><properties><docker.username>$DOCKER_USERNAME</docker.username><docker.password>$DOCKER_PASSWORD</docker.password><docker.image>DOCKER_IMAGE</docker.image></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
+          echo "<settings><profiles><profile><id>github</id><properties><docker.username>$DOCKER_USERNAME</docker.username><docker.password>$DOCKER_PASSWORD</docker.password><docker.image>$DOCKER_IMAGE</docker.image></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
           chmod +x mvnw
           ./mvnw -ntp -Pgithub -pl sentinel-dashboard jib:build -Djib.disableUpdateChecks=true -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
         env:
