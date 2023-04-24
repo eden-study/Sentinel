@@ -15,9 +15,9 @@
  */
 package com.alibaba.csp.sentinel.dashboard.datasource.entity;
 
-import java.util.Date;
-
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
+
+import java.util.Date;
 
 /**
  * @author leyou
@@ -32,7 +32,22 @@ public class MachineEntity {
     private Date timestamp;
     private Integer port;
 
-    public long getId() {
+	public MachineEntity(Long id, Date gmtCreate, Date gmtModified, String app, String ip, String hostname, Date timestamp, Integer port) {
+		this.id = id;
+		this.gmtCreate = gmtCreate;
+		this.gmtModified = gmtModified;
+		this.app = app;
+		this.ip = ip;
+		this.hostname = hostname;
+		this.timestamp = timestamp;
+		this.port = port;
+	}
+
+	public static MachineEntityBuilder builder() {
+		return new MachineEntityBuilder();
+	}
+
+	public long getId() {
         return id;
     }
 
@@ -122,4 +137,66 @@ public class MachineEntity {
             ", port=" + port +
             '}';
     }
+
+	public static class MachineEntityBuilder {
+		private Long id;
+		private Date gmtCreate;
+		private Date gmtModified;
+		private String app;
+		private String ip;
+		private String hostname;
+		private Date timestamp;
+		private Integer port;
+
+		MachineEntityBuilder() {
+		}
+
+		public MachineEntityBuilder id(Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public MachineEntityBuilder gmtCreate(Date gmtCreate) {
+			this.gmtCreate = gmtCreate;
+			return this;
+		}
+
+		public MachineEntityBuilder gmtModified(Date gmtModified) {
+			this.gmtModified = gmtModified;
+			return this;
+		}
+
+		public MachineEntityBuilder app(String app) {
+			this.app = app;
+			return this;
+		}
+
+		public MachineEntityBuilder ip(String ip) {
+			this.ip = ip;
+			return this;
+		}
+
+		public MachineEntityBuilder hostname(String hostname) {
+			this.hostname = hostname;
+			return this;
+		}
+
+		public MachineEntityBuilder timestamp(Date timestamp) {
+			this.timestamp = timestamp;
+			return this;
+		}
+
+		public MachineEntityBuilder port(Integer port) {
+			this.port = port;
+			return this;
+		}
+
+		public MachineEntity build() {
+			return new MachineEntity(id, gmtCreate, gmtModified, app, ip, hostname, timestamp, port);
+		}
+
+		public String toString() {
+			return "MachineEntity.MachineEntityBuilder(id=" + this.id + ", gmtCreate=" + this.gmtCreate + ", gmtModified=" + this.gmtModified + ", app=" + this.app + ", ip=" + this.ip + ", hostname=" + this.hostname + ", timestamp=" + this.timestamp + ", port=" + this.port + ")";
+		}
+	}
 }

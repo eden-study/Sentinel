@@ -102,14 +102,14 @@ app.service('FlowServiceV1', ['$http', function ($http) {
             alert('无效的流控整形方式');
             return false;
         }
-        if (rule.controlBehavior == 1 && notNumberGreaterThanZero(rule.warmUpPeriodSec)) {
-            alert('预热时长必须大于 0');
-            return false;
-        }
-        if (rule.controlBehavior == 2 && notNumberGreaterThanZero(rule.maxQueueingTimeMs)) {
-            alert('排队超时时间必须大于 0');
-            return false;
-        }
+        if ((rule.controlBehavior == 1 || rule.controlBehavior == 3) && notNumberGreaterThanZero(rule.warmUpPeriodSec)) {
+			alert('预热时长必须大于 0');
+			return false;
+		}
+		if ((rule.controlBehavior == 2 || rule.controlBehavior == 3) && notNumberGreaterThanZero(rule.maxQueueingTimeMs)) {
+			alert('排队超时时间必须大于 0');
+			return false;
+		}
         if (rule.clusterMode && (rule.clusterConfig === undefined || rule.clusterConfig.thresholdType === undefined)) {
             alert('集群限流配置不正确');
             return false;

@@ -15,18 +15,15 @@
  */
 package com.alibaba.csp.sentinel.dashboard.rule;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
+
 /**
- * @author Eric Zhao
- * @since 1.4.0
+ * 动态规则发布类
+ *
+ * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
+ * @since 1.8.2
  */
 public interface DynamicRulePublisher<T> {
 
-    /**
-     * Publish rules to remote rule configuration center for given application name.
-     *
-     * @param app app name
-     * @param rules list of rules to push
-     * @throws Exception if some error occurs
-     */
-    void publish(String app, T rules) throws Exception;
+	void publish(MachineEntity machineEntity, T rules) throws Exception;
 }

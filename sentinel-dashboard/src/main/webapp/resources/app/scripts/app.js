@@ -21,7 +21,8 @@ angular
     'rzTable',
     'angular-clipboard',
     'selectize',
-    'angularUtils.directives.dirPagination'
+    'angularUtils.directives.dirPagination',
+	  'ui.bootstrap.datetimepicker'
   ])
   .factory('AuthInterceptor', ['$window', '$state', function ($window, $state) {
     var authInterceptor = {

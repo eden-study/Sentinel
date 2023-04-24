@@ -1,0 +1,4 @@
+# Auto Configuration Import Filters
+org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
+  com.alibaba.csp.sentinel.dashboard.config.metric.KafkaAutoConfigurationImportFilter,\
+  com.alibaba.csp.sentinel.dashboard.config.metric.MetricsRepositoryAutoConfigurationImportFilter

@@ -1,30 +1,74 @@
-# IntelliJ project files
+# Java
+*.class
+*.db
+*.ear
+*.jar
+*.war
+
+# Intellij
 .idea/
+classes/
+*.ids
 *.iml
-out
-gen
-
-# Visual Studio Code
-.history/
-
-# Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-!/.mvn/wrapper/maven-wrapper.jar
+*.ipr
+*.iws
+*.orig
 
 # Eclipse
-.classpath
 .settings/
+.classpath
+.factorypath
+.loadpath
+.metadata
 .project
-bin/
+*.bak
+*.launch
+*.pydevproject
+*.swp
+*.tmp
+*~.nib
+local.properties
 
-# System related
-*.DS_Store
+# Visual Studio Code
+.vscode/
+
+# JRebel
+rebel.xml
+
+# Maven
+!.mvn/wrapper/maven-wrapper.jar
+!maven/wrapper/maven-wrapper.jar
+maven/
+target/
+.flattened-pom.xml
+release.properties
+pom.xml.releaseBackup
+
+# Gradle
+!gradle/wrapper/maven-wrapper.jar
+.gradle/
+build/
+
+# SVN
+.svn/
+
+# Mac OSX
+.DS_Store
+
+# Windows
+._*
+*.*~
+*~
+.merge_file*
+Desktop.ini
 Thumbs.db
+
+# Others
+logs/
+log/
+.log
+.buildpath
+.cproject
+.externalToolBuilders/**
+.Spotlight-V100
+.Trashes

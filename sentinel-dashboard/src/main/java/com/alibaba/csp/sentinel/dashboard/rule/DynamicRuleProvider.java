@@ -15,11 +15,15 @@
  */
 package com.alibaba.csp.sentinel.dashboard.rule;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
+
 /**
- * @author Eric Zhao
- * @since 1.4.0
+ * 动态规则提供类
+ *
+ * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
+ * @since 1.8.2
  */
 public interface DynamicRuleProvider<T> {
 
-    T getRules(String appName) throws Exception;
+	T getRules(MachineEntity machineEntity) throws Exception;
 }

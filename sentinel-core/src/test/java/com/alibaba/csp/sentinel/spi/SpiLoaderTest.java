@@ -22,7 +22,6 @@ import com.alibaba.csp.sentinel.slotchain.ProcessorSlot;
 import com.alibaba.csp.sentinel.slotchain.SlotChainBuilder;
 import com.alibaba.csp.sentinel.slots.DefaultSlotChainBuilder;
 import com.alibaba.csp.sentinel.slots.block.authority.AuthoritySlot;
-import com.alibaba.csp.sentinel.slots.block.degrade.DefaultCircuitBreakerSlot;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeSlot;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowSlot;
 import com.alibaba.csp.sentinel.slots.clusterbuilder.ClusterBuilderSlot;
@@ -30,7 +29,6 @@ import com.alibaba.csp.sentinel.slots.logger.LogSlot;
 import com.alibaba.csp.sentinel.slots.nodeselector.NodeSelectorSlot;
 import com.alibaba.csp.sentinel.slots.statistic.StatisticSlot;
 import com.alibaba.csp.sentinel.slots.system.SystemSlot;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -100,14 +98,13 @@ public class SpiLoaderTest {
         prototypeSlotClasses.add(NodeSelectorSlot.class);
         prototypeSlotClasses.add(ClusterBuilderSlot.class);
 
-        List<Class<? extends ProcessorSlot>> singletonSlotClasses = new ArrayList<>(7);
+        List<Class<? extends ProcessorSlot>> singletonSlotClasses = new ArrayList<>(6);
         singletonSlotClasses.add(LogSlot.class);
         singletonSlotClasses.add(StatisticSlot.class);
         singletonSlotClasses.add(AuthoritySlot.class);
         singletonSlotClasses.add(SystemSlot.class);
         singletonSlotClasses.add(FlowSlot.class);
         singletonSlotClasses.add(DegradeSlot.class);
-        singletonSlotClasses.add(DefaultCircuitBreakerSlot.class);
 
         for (int i = 0; i < slots1.size(); i++) {
             ProcessorSlot slot1 = slots1.get(i);
@@ -151,7 +148,7 @@ public class SpiLoaderTest {
         assertNotNull(sortedSlots);
 
         // Total 8 default slot in sentinel-core
-        assertEquals(9, sortedSlots.size());
+        assertEquals(8, sortedSlots.size());
 
         // Verify the order of slot
         int index = 0;
@@ -162,7 +159,6 @@ public class SpiLoaderTest {
         assertTrue(sortedSlots.get(index++) instanceof AuthoritySlot);
         assertTrue(sortedSlots.get(index++) instanceof SystemSlot);
         assertTrue(sortedSlots.get(index++) instanceof FlowSlot);
-        assertTrue(sortedSlots.get(index++) instanceof DefaultCircuitBreakerSlot);
         assertTrue(sortedSlots.get(index++) instanceof DegradeSlot);
     }
 
@@ -180,7 +176,7 @@ public class SpiLoaderTest {
         ProcessorSlot slot = SpiLoader.of(ProcessorSlot.class).loadLowestPriorityInstance();
         assertNotNull(slot);
 
-        // DegradeSlot is lowest order priority with @Spi(order = -1000) among all slots
+        // NodeSelectorSlot is lowest order priority with @Spi(order = -1000) among all slots
         assertTrue(slot instanceof DegradeSlot);
     }
 
@@ -222,8 +218,7 @@ public class SpiLoaderTest {
 
     @Test
     public void testLoadInstanceByAliasName() {
-        ProcessorSlot slot = SpiLoader.of(ProcessorSlot.class).loadInstance(
-            "com.alibaba.csp.sentinel.slots.statistic.StatisticSlot");
+        ProcessorSlot slot = SpiLoader.of(ProcessorSlot.class).loadInstance("com.alibaba.csp.sentinel.slots.statistic.StatisticSlot");
         assertNotNull(slot);
         assertTrue(slot instanceof StatisticSlot);
     }
@@ -232,7 +227,7 @@ public class SpiLoaderTest {
     public void testToString() {
         SpiLoader spiLoader = SpiLoader.of(ProcessorSlot.class);
         assertEquals("com.alibaba.csp.sentinel.spi.SpiLoader[com.alibaba.csp.sentinel.slotchain.ProcessorSlot]"
-            , spiLoader.toString());
+                , spiLoader.toString());
     }
 
     /**

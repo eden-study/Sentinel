@@ -9,8 +9,8 @@ import org.apache.curator.framework.AuthInfo;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.ChildData;
-import org.apache.curator.framework.recipes.cache.CuratorCache;
-import org.apache.curator.framework.recipes.cache.CuratorCacheListener;
+import org.apache.curator.framework.recipes.cache.NodeCache;
+import org.apache.curator.framework.recipes.cache.NodeCacheListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 
 import java.util.Arrays;
@@ -40,11 +40,11 @@ public class ZookeeperDataSource<T> extends AbstractDataSource<String, T> {
             new ArrayBlockingQueue<Runnable>(1), new NamedThreadFactory("sentinel-zookeeper-ds-update", true),
             new ThreadPoolExecutor.DiscardOldestPolicy());
 
-    private CuratorCacheListener listener;
+    private NodeCacheListener listener;
     private final String path;
 
     private CuratorFramework zkClient = null;
-    private CuratorCache nodeCache = null;
+    private NodeCache nodeCache = null;
 
     public ZookeeperDataSource(final String serverAddr, final String path, Converter<String, T> parser) {
         super(parser);
@@ -104,17 +104,21 @@ public class ZookeeperDataSource<T> extends AbstractDataSource<String, T> {
     private void initZookeeperListener(final String serverAddr, final List<AuthInfo> authInfos) {
         try {
 
-            this.listener = CuratorCacheListener.builder().forNodeCache(() -> {
-                try {
-                    T newValue = loadConfig();
-                    RecordLog.info("[ZookeeperDataSource] New property value received for ({}, {}): {}",
+            this.listener = new NodeCacheListener() {
+                @Override
+                public void nodeChanged() {
+
+                    try {
+                        T newValue = loadConfig();
+                        RecordLog.info("[ZookeeperDataSource] New property value received for ({}, {}): {}",
                             serverAddr, path, newValue);
-                    // Update the new value to the property.
-                    getProperty().updateValue(newValue);
-                } catch (Exception ex) {
-                    RecordLog.warn("[ZookeeperDataSource] loadConfig exception", ex);
+                        // Update the new value to the property.
+                        getProperty().updateValue(newValue);
+                    } catch (Exception ex) {
+                        RecordLog.warn("[ZookeeperDataSource] loadConfig exception", ex);
+                    }
                 }
-            }).build();
+            };
 
             String zkKey = getZkKey(serverAddr, authInfos);
             if (zkClientMap.containsKey(zkKey)) {
@@ -144,8 +148,8 @@ public class ZookeeperDataSource<T> extends AbstractDataSource<String, T> {
                 }
             }
 
-            this.nodeCache = CuratorCache.build(this.zkClient, this.path);
-            this.nodeCache.listenable().addListener(this.listener, this.pool);
+            this.nodeCache = new NodeCache(this.zkClient, this.path);
+            this.nodeCache.getListenable().addListener(this.listener, this.pool);
             this.nodeCache.start();
         } catch (Exception e) {
             RecordLog.warn("[ZookeeperDataSource] Error occurred when initializing Zookeeper data source", e);
@@ -159,7 +163,7 @@ public class ZookeeperDataSource<T> extends AbstractDataSource<String, T> {
             throw new IllegalStateException("Zookeeper has not been initialized or error occurred");
         }
         String configInfo = null;
-        ChildData childData = nodeCache.get(path).orElse(null);
+        ChildData childData = nodeCache.getCurrentData();
         if (null != childData && childData.getData() != null) {
 
             configInfo = new String(childData.getData());
@@ -170,7 +174,7 @@ public class ZookeeperDataSource<T> extends AbstractDataSource<String, T> {
     @Override
     public void close() throws Exception {
         if (this.nodeCache != null) {
-            this.nodeCache.listenable().removeListener(listener);
+            this.nodeCache.getListenable().removeListener(listener);
             this.nodeCache.close();
         }
         if (this.zkClient != null) {

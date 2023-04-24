@@ -15,33 +15,22 @@
  */
 package com.alibaba.csp.sentinel.dashboard.controller.v2;
 
-import java.util.Date;
-import java.util.List;
-
 import com.alibaba.csp.sentinel.dashboard.auth.AuthAction;
-import com.alibaba.csp.sentinel.dashboard.auth.AuthService;
 import com.alibaba.csp.sentinel.dashboard.auth.AuthService.PrivilegeType;
-import com.alibaba.csp.sentinel.util.StringUtil;
-
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
-import com.alibaba.csp.sentinel.dashboard.repository.rule.InMemoryRuleRepositoryAdapter;
+import com.alibaba.csp.sentinel.dashboard.domain.Result;
+import com.alibaba.csp.sentinel.dashboard.repository.rule.RuleRepository;
 import com.alibaba.csp.sentinel.dashboard.rule.DynamicRuleProvider;
 import com.alibaba.csp.sentinel.dashboard.rule.DynamicRulePublisher;
-import com.alibaba.csp.sentinel.dashboard.domain.Result;
-
+import com.alibaba.csp.sentinel.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Flow rule controller (v2).
@@ -56,14 +45,13 @@ public class FlowControllerV2 {
     private final Logger logger = LoggerFactory.getLogger(FlowControllerV2.class);
 
     @Autowired
-    private InMemoryRuleRepositoryAdapter<FlowRuleEntity> repository;
+    private RuleRepository<FlowRuleEntity, Long> repository;
 
     @Autowired
-    @Qualifier("flowRuleDefaultProvider")
-    private DynamicRuleProvider<List<FlowRuleEntity>> ruleProvider;
+    private DynamicRuleProvider<List<FlowRuleEntity>> dynamicRuleProvider;
+
     @Autowired
-    @Qualifier("flowRuleDefaultPublisher")
-    private DynamicRulePublisher<List<FlowRuleEntity>> rulePublisher;
+    private DynamicRulePublisher<List<FlowRuleEntity>> dynamicRulePublisher;
 
     @GetMapping("/rules")
     @AuthAction(PrivilegeType.READ_RULE)
@@ -73,7 +61,7 @@ public class FlowControllerV2 {
             return Result.ofFail(-1, "app can't be null or empty");
         }
         try {
-            List<FlowRuleEntity> rules = ruleProvider.getRules(app);
+            List<FlowRuleEntity> rules = getRules(app);
             if (rules != null && !rules.isEmpty()) {
                 for (FlowRuleEntity entity : rules) {
                     entity.setApp(app);
@@ -122,11 +110,11 @@ public class FlowControllerV2 {
             return Result.ofFail(-1, "controlBehavior can't be null");
         }
         int controlBehavior = entity.getControlBehavior();
-        if (controlBehavior == 1 && entity.getWarmUpPeriodSec() == null) {
-            return Result.ofFail(-1, "warmUpPeriodSec can't be null when controlBehavior==1");
+        if ((controlBehavior == 1 || controlBehavior == 3) && entity.getWarmUpPeriodSec() == null) {
+            return Result.ofFail(-1, "warmUpPeriodSec can't be null when controlBehavior in (1, 3)");
         }
-        if (controlBehavior == 2 && entity.getMaxQueueingTimeMs() == null) {
-            return Result.ofFail(-1, "maxQueueingTimeMs can't be null when controlBehavior==2");
+        if ((controlBehavior == 2 || controlBehavior == 3) && entity.getMaxQueueingTimeMs() == null) {
+            return Result.ofFail(-1, "maxQueueingTimeMs can't be null when controlBehavior in (2, 3)");
         }
         if (entity.isClusterMode() && entity.getClusterConfig() == null) {
             return Result.ofFail(-1, "cluster config should be valid");
@@ -135,7 +123,7 @@ public class FlowControllerV2 {
     }
 
     @PostMapping("/rule")
-    @AuthAction(value = AuthService.PrivilegeType.WRITE_RULE)
+    @AuthAction(value = PrivilegeType.WRITE_RULE)
     public Result<FlowRuleEntity> apiAddFlowRule(@RequestBody FlowRuleEntity entity) {
 
         Result<FlowRuleEntity> checkResult = checkEntityInternal(entity);
@@ -159,7 +147,7 @@ public class FlowControllerV2 {
     }
 
     @PutMapping("/rule/{id}")
-    @AuthAction(AuthService.PrivilegeType.WRITE_RULE)
+    @AuthAction(PrivilegeType.WRITE_RULE)
 
     public Result<FlowRuleEntity> apiUpdateFlowRule(@PathVariable("id") Long id,
                                                     @RequestBody FlowRuleEntity entity) {
@@ -219,8 +207,17 @@ public class FlowControllerV2 {
         return Result.ofSuccess(id);
     }
 
-    private void publishRules(/*@NonNull*/ String app) throws Exception {
-        List<FlowRuleEntity> rules = repository.findAllByApp(app);
-        rulePublisher.publish(app, rules);
-    }
+	private List<FlowRuleEntity> getRules(String app) throws Exception {
+		return dynamicRuleProvider.getRules(MachineEntity.builder().app(app).build());
+	}
+
+	private void publishRules(String app) {
+		List<FlowRuleEntity> rules = repository.findAllByApp(app);
+//         return rulePublisher.publish(app, rules);
+		try {
+			dynamicRulePublisher.publish(MachineEntity.builder().app(app).build(), rules);
+		} catch (Exception e) {
+			logger.error("Publish flow rules failed after rule delete", e);
+		}
+	}
 }

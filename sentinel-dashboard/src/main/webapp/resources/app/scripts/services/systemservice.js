@@ -20,15 +20,15 @@ app.service('SystemService', ['$http', function ($http) {
       ip: rule.ip,
       port: rule.port
     };
-    if (rule.grade == 0) {// avgLoad
+    if (rule.grade === 0) {// avgLoad
       param.highestSystemLoad = rule.highestSystemLoad;
-    } else if (rule.grade == 1) {// avgRt
+    } else if (rule.grade === 1) {// avgRt
       param.avgRt = rule.avgRt;
-    } else if (rule.grade == 2) {// maxThread
+    } else if (rule.grade === 2) {// maxThread
       param.maxThread = rule.maxThread;
-    } else if (rule.grade == 3) {// qps
+    } else if (rule.grade === 3) {// qps
       param.qps = rule.qps;
-    } else if (rule.grade == 4) {// cpu
+    } else if (rule.grade === 4) {// cpu
       param.highestCpuUsage = rule.highestCpuUsage;
     }
 
@@ -43,15 +43,15 @@ app.service('SystemService', ['$http', function ($http) {
     var param = {
       id: rule.id,
     };
-    if (rule.grade == 0) {// avgLoad
+    if (rule.grade === 0) {// avgLoad
       param.highestSystemLoad = rule.highestSystemLoad;
-    } else if (rule.grade == 1) {// avgRt
+    } else if (rule.grade === 1) {// avgRt
       param.avgRt = rule.avgRt;
-    } else if (rule.grade == 2) {// maxThread
+    } else if (rule.grade === 2) {// maxThread
       param.maxThread = rule.maxThread;
-    } else if (rule.grade == 3) {// qps
+    } else if (rule.grade === 3) {// qps
       param.qps = rule.qps;
-    } else if (rule.grade == 4) {// cpu
+    } else if (rule.grade === 4) {// cpu
         param.highestCpuUsage = rule.highestCpuUsage;
     }
 

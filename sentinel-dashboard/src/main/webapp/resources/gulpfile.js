@@ -71,7 +71,7 @@ gulp.task('lib', function () {
 
 /*
 * css任务
-* 在src下创建style文件夹，里面存放less文件。 
+* 在src下创建style文件夹，里面存放less文件。
 */
 gulp.task('css', function () {
   gulp.src(CSS_APP)
@@ -123,7 +123,7 @@ gulp.task('serve', ['build'], function () {
   });
   // 打开浏览器
   setTimeout(() => {
-    open('http://localhost:8080/index_dev.htm')
+    open('http://localhost:1234/index_dev.htm')
   }, 200);
   // 监听
   gulp.watch(app.srcPath + '**/*.js', ['js']);

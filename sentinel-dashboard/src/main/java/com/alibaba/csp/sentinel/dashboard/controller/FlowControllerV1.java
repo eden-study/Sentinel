@@ -15,34 +15,25 @@
  */
 package com.alibaba.csp.sentinel.dashboard.controller;
 
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
 import com.alibaba.csp.sentinel.dashboard.auth.AuthAction;
 import com.alibaba.csp.sentinel.dashboard.auth.AuthService.PrivilegeType;
-import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
-import com.alibaba.csp.sentinel.util.StringUtil;
-
-import com.alibaba.csp.sentinel.dashboard.client.SentinelApiClient;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
+import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
-import com.alibaba.csp.sentinel.dashboard.repository.rule.InMemoryRuleRepositoryAdapter;
-
+import com.alibaba.csp.sentinel.dashboard.repository.rule.RuleRepository;
+import com.alibaba.csp.sentinel.dashboard.rule.DynamicRuleProvider;
+import com.alibaba.csp.sentinel.dashboard.rule.DynamicRulePublisher;
+import com.alibaba.csp.sentinel.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Flow rule controller.
@@ -56,13 +47,18 @@ public class FlowControllerV1 {
 
     private final Logger logger = LoggerFactory.getLogger(FlowControllerV1.class);
 
-    @Autowired
-    private InMemoryRuleRepositoryAdapter<FlowRuleEntity> repository;
+//    @Autowired
+//    private InMemoryRuleRepositoryAdapter<FlowRuleEntity> repository;
     @Autowired
     private AppManagement appManagement;
 
-    @Autowired
-    private SentinelApiClient sentinelApiClient;
+	@Autowired
+	private RuleRepository<FlowRuleEntity, Long> repository;
+	@Autowired
+	private DynamicRuleProvider<List<FlowRuleEntity>> dynamicRuleProvider;
+
+	@Autowired
+	private DynamicRulePublisher<List<FlowRuleEntity>> dynamicRulePublisher;
 
     @GetMapping("/rules")
     @AuthAction(PrivilegeType.READ_RULE)
@@ -82,7 +78,7 @@ public class FlowControllerV1 {
             return Result.ofFail(-1, "given ip does not belong to given app");
         }
         try {
-            List<FlowRuleEntity> rules = sentinelApiClient.fetchFlowRuleOfMachine(app, ip, port);
+            List<FlowRuleEntity> rules = getRules(app, ip, port);
             rules = repository.saveAll(rules);
             return Result.ofSuccess(rules);
         } catch (Throwable throwable) {
@@ -129,11 +125,11 @@ public class FlowControllerV1 {
             return Result.ofFail(-1, "controlBehavior can't be null");
         }
         int controlBehavior = entity.getControlBehavior();
-        if (controlBehavior == 1 && entity.getWarmUpPeriodSec() == null) {
-            return Result.ofFail(-1, "warmUpPeriodSec can't be null when controlBehavior==1");
+        if ((controlBehavior == 1 || controlBehavior == 3) && entity.getWarmUpPeriodSec() == null) {
+            return Result.ofFail(-1, "warmUpPeriodSec can't be null when controlBehavior in (1, 3)");
         }
-        if (controlBehavior == 2 && entity.getMaxQueueingTimeMs() == null) {
-            return Result.ofFail(-1, "maxQueueingTimeMs can't be null when controlBehavior==2");
+        if ((controlBehavior == 2 || controlBehavior == 3) && entity.getMaxQueueingTimeMs() == null) {
+            return Result.ofFail(-1, "maxQueueingTimeMs can't be null when controlBehavior in (2, 3)");
         }
         if (entity.isClusterMode() && entity.getClusterConfig() == null) {
             return Result.ofFail(-1, "cluster config should be valid");
@@ -157,7 +153,7 @@ public class FlowControllerV1 {
         try {
             entity = repository.save(entity);
 
-            publishRules(entity.getApp(), entity.getIp(), entity.getPort()).get(5000, TimeUnit.MILLISECONDS);
+            publishRules(entity.getApp(), entity.getIp(), entity.getPort());
             return Result.ofSuccess(entity);
         } catch (Throwable t) {
             Throwable e = t instanceof ExecutionException ? t.getCause() : t;
@@ -211,7 +207,7 @@ public class FlowControllerV1 {
             }
         }
         if (controlBehavior != null) {
-            if (controlBehavior != 0 && controlBehavior != 1 && controlBehavior != 2) {
+            if (controlBehavior != 0 && controlBehavior != 1 && controlBehavior != 2 && controlBehavior != 3) {
                 return Result.ofFail(-1, "controlBehavior must be in [0, 1, 2], but " + controlBehavior + " got");
             }
             if (controlBehavior == 1 && warmUpPeriodSec == null) {
@@ -220,6 +216,9 @@ public class FlowControllerV1 {
             if (controlBehavior == 2 && maxQueueingTimeMs == null) {
                 return Result.ofFail(-1, "maxQueueingTimeMs can't be null when controlBehavior==2");
             }
+			if (controlBehavior == 3 && warmUpPeriodSec == null && maxQueueingTimeMs == null) {
+				return Result.ofFail(-1, "warmUpPeriodSec and maxQueueingTimeMs can't be null when controlBehavior==3");
+			}
             entity.setControlBehavior(controlBehavior);
             if (warmUpPeriodSec != null) {
                 entity.setWarmUpPeriodSec(warmUpPeriodSec);
@@ -236,7 +235,7 @@ public class FlowControllerV1 {
                 return Result.ofFail(-1, "save entity fail: null");
             }
 
-            publishRules(entity.getApp(), entity.getIp(), entity.getPort()).get(5000, TimeUnit.MILLISECONDS);
+            publishRules(entity.getApp(), entity.getIp(), entity.getPort());
             return Result.ofSuccess(entity);
         } catch (Throwable t) {
             Throwable e = t instanceof ExecutionException ? t.getCause() : t;
@@ -264,7 +263,7 @@ public class FlowControllerV1 {
             return Result.ofFail(-1, e.getMessage());
         }
         try {
-            publishRules(oldEntity.getApp(), oldEntity.getIp(), oldEntity.getPort()).get(5000, TimeUnit.MILLISECONDS);
+            publishRules(oldEntity.getApp(), oldEntity.getIp(), oldEntity.getPort());
             return Result.ofSuccess(id);
         } catch (Throwable t) {
             Throwable e = t instanceof ExecutionException ? t.getCause() : t;
@@ -274,8 +273,17 @@ public class FlowControllerV1 {
         }
     }
 
-    private CompletableFuture<Void> publishRules(String app, String ip, Integer port) {
-        List<FlowRuleEntity> rules = repository.findAllByMachine(MachineInfo.of(app, ip, port));
-        return sentinelApiClient.setFlowRuleOfMachineAsync(app, ip, port, rules);
-    }
+	private List<FlowRuleEntity> getRules(String app, String ip, Integer port) throws Exception {
+		return dynamicRuleProvider.getRules(MachineEntity.builder().app(app).ip(ip).port(port).build());
+	}
+
+	private void publishRules(String app, String ip, Integer port) {
+		List<FlowRuleEntity> rules = repository.findAllByMachine(MachineInfo.of(app, ip, port));
+//         return sentinelApiClient.setFlowRuleOfMachineAsync(app, ip, port, rules);
+		try {
+			dynamicRulePublisher.publish(MachineEntity.builder().app(app).ip(ip).port(port).build(), rules);
+		} catch (Exception e) {
+			logger.error("Publish flow rules failed after rule delete", e);
+		}
+	}
 }
