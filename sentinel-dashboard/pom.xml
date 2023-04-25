@@ -39,7 +39,7 @@
         <influxdb.version>6.4.0</influxdb.version>
 
         <!-- 插件 -->
-        <start-class>com.alibaba.csp.sentinel.dashboard.DashboardApplication</start-class>
+        <start-class>com.alibaba.csp.sentinel.dashboard.SentinelApplication</start-class>
         <jib-maven-plugin.version>2.2.0</jib-maven-plugin.version>
         <docker.image />
         <docker.username />
