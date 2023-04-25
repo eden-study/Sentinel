@@ -38,7 +38,7 @@ Sentinel 是阿里巴巴开源的流量治理平台，提供了 `流量控制`�
 1. 在项目目录下运行 `mvn install`（如果不想运行测试，可以加上 `-DskipTests` 参数）。
 2. 进入 `sentinel-dashboard` 目录，执行 `mvn spring-boot:run` 或者启动 `SentinelApplication` 类。运行成功的话，可以看到 `Spring Boot` 启动成功的界面。
 
-本项目提供两种可选项配置，请在 `sentinel-dashboard/src/main/resources/application.properties` 按需调整。
+在实际的生产需求，Sentinel 保存的规则和监控是需要持久化落盘的，因此，您可以在 `sentinel-dashboard/src/main/resources/application.properties` 接入外部组件。
 
 * 规则存储类型：memory（默认）、nacos（推荐）、apollo、zookeeper
 ```properties
@@ -117,7 +117,23 @@ java -Dserver.port=8080 \
 
 ### Docker 部署
 
-在项目根目录执行 `docker build -f docker/Dockerfile sentinel-dashboard:{tag} .` 打包为镜像。
+调整 Maven 配置文件 `setiings.xml`，填写相关凭据。
+````xml
+<settings>
+    <profiles>
+        <profile>
+            <id>github</id>
+            <properties>
+                <docker.username>${env.DOCKER_USERNAME}</docker.username>
+                <docker.password>${env.DOCKER_PASSWORD}</docker.password>
+                <docker.image>${env.DOCKER_IMAGE}</docker.image>
+            </properties>
+        </profile>
+    </profiles>
+</settings>
+````
+
+在项目根目录执行 `mvn -Pgithub -pl sentinel-dashboard jib:build -Djib.disableUpdateChecks=true` 打包为镜像。
 
 ### Helm 部署
 
