@@ -31,7 +31,7 @@ Sentinel 是阿里巴巴开源的流量治理平台，提供了 `流量控制`�
 
 ## 如何启动
 
-### 本地启动
+### IDEA 启动
 
 本项目默认不依赖外部组件，可以直接启动运行。
 
@@ -90,7 +90,7 @@ spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.Str
 
 ### 镜像启动
 
-本项目已发布到 [Docker Hub](https://hub.docker.com/repository/docker/shiyindaxiaojie/sentinel-dashboard)，请执行以下命令运行。
+本项目已发布到 [Docker Hub](https://hub.docker.com/repository/docker/shiyindaxiaojie/sentinel-dashboard)，请执行参考命令运行。
 
 ```bash
 docker run -p 8090:8090 --name=sentinel-dashboard -d shiyindaxiaojie/sentinel-dashboard
