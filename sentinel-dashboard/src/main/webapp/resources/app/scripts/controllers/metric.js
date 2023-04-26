@@ -1,15 +1,16 @@
 var app = angular.module('sentinelDashboardApp');
-
+const timeInterval = 5;
 app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interval', '$timeout',
 	function ($scope, $stateParams, MetricService, $interval, $timeout) {
 		moment.locale('zh-cn');
 
 		$scope.loading = false;
-		$scope.display = false;
+		$scope.custom = false;
+		$scope.quick = false;
 		$scope.charts = [];
 		$scope.startTime = new Date();
 		$scope.endTime = new Date();
-		$scope.startTime.setMinutes($scope.endTime.getMinutes() - 5);
+		$scope.startTime.setMinutes($scope.endTime.getMinutes() - timeInterval);
 		$scope.startTimeFmt = formatDate($scope.startTime);
 		$scope.endTimeFmt = formatDate($scope.endTime);
 		$scope.endDateBeforeRender = endDateBeforeRender;
@@ -19,6 +20,10 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 
 		function formatDate(date) {
 			return moment(date).format('YYYY/MM/DD HH:mm:ss');
+		}
+
+		function formatTime(date) {
+			return moment(date).format('HH:mm:ss');
 		}
 
 		function startDateOnSetTime (newDate, oldDate) {
@@ -33,7 +38,7 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 
 		function startDateBeforeRender ($dates) {
 			if ($scope.dateRangeEnd) {
-				var activeDate = moment($scope.dateRangeEnd);
+				const activeDate = moment($scope.dateRangeEnd);
 
 				$dates.filter(function (date) {
 					return date.localDateValue() >= activeDate.valueOf()
@@ -45,7 +50,7 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 
 		function endDateBeforeRender ($view, $dates) {
 			if ($scope.dateRangeStart) {
-				var activeDate = moment($scope.dateRangeStart).subtract(1, $view).add(1, 'minute');
+				const activeDate = moment($scope.dateRangeStart).subtract(1, $view).add(1, 'minute');
 
 				$dates.filter(function (date) {
 					return date.localDateValue() <= activeDate.valueOf()
@@ -53,6 +58,25 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 					date.selectable = false;
 				})
 			}
+		}
+
+		$scope.quickOnSetTime = function(calculate, offset) {
+			if (calculate === 0) {
+				$scope.endTime = new Date();
+				$scope.startTime.setMinutes($scope.endTime.getMinutes() - timeInterval);
+			} else {
+				let offsetTime = calculate > 0?
+					$scope.endTime.getMinutes() + offset:
+					$scope.endTime.getMinutes() - offset;
+				$scope.startTime.setMinutes(offsetTime - timeInterval);
+				$scope.endTime.setMinutes(offsetTime);
+			}
+			queryIdentityDatas();
+		}
+
+		function showSelectedTime() {
+			let showSelectedTime = document.getElementById('showSelectedTime');
+			showSelectedTime.innerHTML = formatDate($scope.startTime) + "~" + formatTime($scope.endTime);
 		}
 
 		$scope.app = $stateParams.app;
@@ -64,17 +88,26 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 			{val : 15, text : "15秒刷新"},
 			{val : 30, text : "30秒刷新"},
 			{val : 60, text : "60秒刷新"},
-			{val : 0, text : "自定义时间"}
+			{val : -1, text : "快捷选择"},
+			{val : 0, text : "自定义"}
 		];
 		$scope.onRefreshIntervalChange = (item) => {
 			if (item.val === 0) {
 				$scope.autoRefresh = false;
 				$interval.cancel(intervalId);
-				$scope.display = true;
+				$scope.custom = true;
+				$scope.quick = false;
+			} else if (item.val === -1) {
+				$scope.autoRefresh = false;
+				$interval.cancel(intervalId);
+				$scope.custom = false;
+				$scope.quick = true;
+				showSelectedTime();
 			} else {
 				$scope.autoRefresh = true;
 				$scope.refreshInterval = 1000 * item.val;
-				$scope.display = false;
+				$scope.custom = false;
+				$scope.quick = false;
 			}
 			reInitIdentityDatas();
 		};
@@ -137,7 +170,7 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 				chart.destroy();
 			}
 			$.each($scope.metrics, function (idx, metric) {
-				if (idx == $scope.metrics.length - 1) {
+				if (idx === $scope.metrics.length - 1) {
 					return;
 				}
 				const chart = new G2.Chart({
@@ -223,7 +256,7 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 						return val;
 					},
 					items: [
-						{ value: 'passQps', marker: { symbol: 'hyphen', stroke: 'green', radius: 5, lineWidth: 2 } },
+						{ value: 'passQps', marker: { symbol: 'hyphen', stroke: 'blue', radius: 5, lineWidth: 2 } },
 						{ value: 'blockQps', marker: { symbol: 'hyphen', stroke: 'red', radius: 5, lineWidth: 2 } },
 						{ value: 'rt', marker: {symbol: 'hyphen', stroke: 'gray', radius: 5, lineWidth: 2} }
 					],
@@ -244,9 +277,9 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 						}
 					}
 				});
-				chart.line().position('timestamp*passQps').size(1).color('green').shape('smooth');
+				chart.line().position('timestamp*passQps').size(1).color('blue').shape('smooth');
 				chart.line().position('timestamp*blockQps').size(1).color('red').shape('smooth');
-				chart.line().position('timestamp*rt').size(0.5).color('gray').shape('smooth');
+				chart.line().position('timestamp*rt').size(0.5).color('white').shape('smooth');
 				G2.track(false);
 				chart.render();
 			});
@@ -255,6 +288,7 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 		$scope.metrics = [];
 		$scope.emptyObjs = [];
 		function queryIdentityDatas() {
+			showSelectedTime();
 			$scope.loading = true;
 			var params = {
 				app: $scope.app,

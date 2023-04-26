@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.alibaba.csp</groupId>
         <artifactId>sentinel-parent</artifactId>
-        <version>1.8.7-SNAPSHOT</version>
+        <version>1.8.6</version>
     </parent>
 
     <artifactId>sentinel-dashboard</artifactId>
@@ -15,6 +15,7 @@
         <resource.delimiter>@</resource.delimiter>
         <spring.boot.version>2.5.12</spring.boot.version>
         <spring.framework.version>5.3.18</spring.framework.version>
+		<jackson.version>2.14.2</jackson.version>
         <lombok.version>1.18.20</lombok.version>
         <mapstruct.version>1.4.1.Final</mapstruct.version>
 
@@ -38,7 +39,7 @@
         <influxdb.version>6.4.0</influxdb.version>
 
         <!-- 插件 -->
-        <start-class>com.alibaba.csp.sentinel.dashboard.DashboardApplication</start-class>
+        <start-class>com.alibaba.csp.sentinel.dashboard.SentinelApplication</start-class>
         <jib-maven-plugin.version>2.2.0</jib-maven-plugin.version>
         <docker.image />
         <docker.username />
@@ -86,6 +87,14 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j-api.version}</version>
             </dependency>
+
+			<dependency>
+				<groupId>com.fasterxml.jackson</groupId>
+				<artifactId>jackson-bom</artifactId>
+				<version>${jackson.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -118,23 +127,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
             <version>${spring.boot.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>jackson-databind</artifactId>
-					<groupId>com.fasterxml.jackson.core</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring.boot.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jackson-databind</artifactId>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -457,54 +454,55 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>${jib-maven-plugin.version}</version>
-                <configuration>
-                    <from>
-                        <image>openjdk:11-jre-slim</image>
-                    </from>
-                    <to>
-                        <image>${docker.image}</image>
-                        <auth>
-                            <username>${docker.username}</username>
-                            <password>${docker.password}</password>
-                        </auth>
-                        <tags>
-                            <tag>${project.version}</tag>
-                        </tags>
-                    </to>
-                    <container>
-                        <entrypoint>
-                            <shell>bash</shell>
-                            <option>-c</option>
-                            <arg>/entrypoint.sh</arg>
-                        </entrypoint>
-                        <ports>
-                            <port>8080</port>
-                        </ports>
-                        <environment>
-                            <TZ>Asia/Shanghai</TZ>
-                            <SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
-                            <JAVA_SLEEP>1</JAVA_SLEEP>
-                            <JAVA_OPTS>-Xms256m -Xmx256m</JAVA_OPTS>
-                        </environment>
-                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-                        <mainClass>${start-class}</mainClass>
-                    </container>
-                    <extraDirectories>
-                        <paths>src/main/docker</paths>
-                        <permissions>
-                            <permission>
-                                <file>/entrypoint.sh</file>
-                                <mode>755</mode>
-                            </permission>
-                        </permissions>
-                    </extraDirectories>
-                    <allowInsecureRegistries>true</allowInsecureRegistries>
-                </configuration>
-            </plugin>
+			<!-- 容器化部署 -->
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>${jib-maven-plugin.version}</version>
+				<configuration>
+					<from>
+						<image>openjdk:11-jre-slim</image>
+					</from>
+					<to>
+						<image>${docker.image}</image>
+						<auth>
+							<username>${docker.username}</username>
+							<password>${docker.password}</password>
+						</auth>
+						<tags>
+							<tag>${project.version}</tag>
+						</tags>
+					</to>
+					<container>
+						<entrypoint>
+							<shell>bash</shell>
+							<option>-c</option>
+							<arg>/entrypoint.sh</arg>
+						</entrypoint>
+						<ports>
+							<port>9999</port>
+						</ports>
+						<environment>
+							<TZ>Asia/Shanghai</TZ>
+							<SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
+							<JAVA_SLEEP>1</JAVA_SLEEP>
+							<JAVA_OPTS>-Xms256m -Xmx256m</JAVA_OPTS>
+						</environment>
+						<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+						<mainClass>${start-class}</mainClass>
+					</container>
+					<extraDirectories>
+						<paths>src/main/docker</paths>
+						<permissions>
+							<permission>
+								<file>/entrypoint.sh</file>
+								<mode>755</mode>
+							</permission>
+						</permissions>
+					</extraDirectories>
+					<allowInsecureRegistries>true</allowInsecureRegistries>
+				</configuration>
+			</plugin>
         </plugins>
 
         <resources>

@@ -474,7 +474,7 @@ body {
 }
 
 .inputs-header {
-    padding: 9px 0;
+    padding: 0 0;
     height: 50px;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
@@ -628,9 +628,9 @@ body {
     padding: 4px 0px;
 }
 
-.datepicker > .table > thead > tr > td > a.btn.active, 
+.datepicker > .table > thead > tr > td > a.btn.active,
 .datepicker > .table > tbody > tr > td > a.btn.active,
-.timepicker > .table > thead > tr > td > a.btn.active, 
+.timepicker > .table > thead > tr > td > a.btn.active,
 .timepicker > .table > tbody > tr > td > a.btn.active {
 /*    color: #ffffff;
     background-color: #1d9d74;
@@ -648,7 +648,7 @@ body {
     padding: 5px 0px;
 }
 
-.datepicker > .table > tbody > tr > td > a, 
+.datepicker > .table > tbody > tr > td > a,
 .timepicker > .table > tbody > tr > td > a {
     margin-left: 8px;
 }
@@ -1289,9 +1289,9 @@ body {
     padding: 4px 0px;
 }
 
-.datepicker > .table > thead > tr > td > a.btn.active, 
+.datepicker > .table > thead > tr > td > a.btn.active,
 .datepicker > .table > tbody > tr > td > a.btn.active,
-.timepicker > .table > thead > tr > td > a.btn.active, 
+.timepicker > .table > thead > tr > td > a.btn.active,
 .timepicker > .table > tbody > tr > td > a.btn.active {
 /*    color: #ffffff;
     background-color: #1d9d74;
@@ -1309,7 +1309,7 @@ body {
     padding: 5px 0px;
 }
 
-.datepicker > .table > tbody > tr > td > a, 
+.datepicker > .table > tbody > tr > td > a,
 .timepicker > .table > tbody > tr > td > a {
     margin-left: 8px;
 }
@@ -1326,10 +1326,10 @@ body {
 
 
 .sortorder:after {
-  content: '\25b2';   
+  content: '\25b2';
 }
 .sortorder.reverse:after {
-  content: '\25bc';   
+  content: '\25bc';
 }
 
 
@@ -1442,7 +1442,7 @@ body {
 
 .btn-tab-active,
 .btn-tab-active:hover,
-.btn-tab-active:focus, 
+.btn-tab-active:focus,
 .btn-tab-default:hover,
 .btn-tab-default:focus,
 .btn-tab-default:active {

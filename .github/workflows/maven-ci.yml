@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - master
+      - 1.8.x
     paths-ignore:
       - '**.md'
   pull_request:
@@ -40,11 +41,11 @@ jobs:
       - name: Build with Maven
         run: |
           chmod +x mvnw
-          ./mvnw -ntp package -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
+          ./mvnw -ntp -pl sentinel-dashboard package -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Publish to GitHub Packages Apache Maven
+      - name: Publish to Docker Hub
         run: |
           echo "<settings><profiles><profile><id>github</id><properties><docker.username>$DOCKER_USERNAME</docker.username><docker.password>$DOCKER_PASSWORD</docker.password></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
           chmod +x mvnw

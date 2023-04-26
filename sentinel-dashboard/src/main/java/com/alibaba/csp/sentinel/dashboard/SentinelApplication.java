@@ -36,12 +36,12 @@ import java.net.InetAddress;
  */
 @Slf4j
 @SpringBootApplication
-public class DashboardApplication {
+public class SentinelApplication {
 
     public static void main(String[] args) {
         triggerSentinelInit();
 
-		SpringApplication app = new SpringApplicationBuilder(DashboardApplication.class)
+		SpringApplication app = new SpringApplicationBuilder(SentinelApplication.class)
 			.web(WebApplicationType.SERVLET).build();
 		app.setBannerMode(Banner.Mode.OFF);
 		ConfigurableApplicationContext context = app.run(args);
