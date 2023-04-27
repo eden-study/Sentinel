@@ -23,7 +23,15 @@ Sentinel 是阿里巴巴开源的流量治理平台，提供了 `流量控制`�
 
 ### 改造后
 
-![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/sentinel/sentinel-dashboard-overview.png)
+![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/sentinel/sentinel-dashboard-overview-refresh.png)
+
+快捷时间选择
+
+![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/sentinel/sentinel-dashboard-overview-quick.png)
+
+自定义时间选择
+
+![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/eden-images/sentinel/sentinel-dashboard-overview-custom.png)
 
 ## 如何构建
 
