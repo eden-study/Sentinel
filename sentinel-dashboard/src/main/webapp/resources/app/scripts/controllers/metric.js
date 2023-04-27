@@ -1,9 +1,11 @@
 var app = angular.module('sentinelDashboardApp');
-const timeInterval = 5;
 app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interval', '$timeout',
 	function ($scope, $stateParams, MetricService, $interval, $timeout) {
 		moment.locale('zh-cn');
 
+		const timeInterval = 5;
+
+		$scope.serviceQuery = '';
 		$scope.loading = false;
 		$scope.custom = false;
 		$scope.quick = false;
@@ -22,8 +24,8 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 			return moment(date).format('YYYY/MM/DD HH:mm:ss');
 		}
 
-		function formatTime(date) {
-			return moment(date).format('HH:mm:ss');
+		function formatShowDate(date) {
+			return moment(date).format('YYYY-MM-DD HH:mm:ss');
 		}
 
 		function startDateOnSetTime (newDate, oldDate) {
@@ -76,7 +78,7 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 
 		function showSelectedTime() {
 			let showSelectedTime = document.getElementById('showSelectedTime');
-			showSelectedTime.innerHTML = formatDate($scope.startTime) + "~" + formatTime($scope.endTime);
+			showSelectedTime.innerHTML = formatShowDate($scope.startTime) + "~" + formatShowDate($scope.endTime);
 		}
 
 		$scope.app = $stateParams.app;
@@ -127,7 +129,12 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 		};
 
 		let searchT;
+		let searchKeyword = '';
 		$scope.searchService = function () {
+			if (searchKeyword === $scope.serviceQuery) {
+				return;
+			}
+			searchKeyword = $scope.serviceQuery;
 			$timeout.cancel(searchT);
 			searchT = $timeout(function () {
 				reInitIdentityDatas();

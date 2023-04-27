@@ -4,9 +4,6 @@
 	</div>
 	<div class="col-md-6">
 		<div class="pagination-footer" style="margin-top:35px;float:right;font-size:12px;">
-			<dir-pagination-controls boundary-links="true" template-url="app/views/pagination.tpl.html" pagination-id="servicesPagination"
-									 on-page-change="pageChanged(newPageNumber)">
-			</dir-pagination-controls>
 			<div class="tools" style="">
 				<span>找到 {{emptyObjs.length}} 条结果, </span>
 				<span>
@@ -27,7 +24,7 @@
 	<div class="row" style="margin-top: 20px; margin-bottom: 20px;">
 		<div class="col-md-12">
 			<div class="card" style="border:0px">
-				<div class="inputs-header">
+				<div class="inputs-header" style="padding: 0 0;height:45px;">
           <span class="brand" style="font-size: 13px;cursor: pointer">
             <i class="fa fa-sort-amount-asc" aria-hidden="true" ng-show="!isDescOrder" ng-click="setDescOrder()"></i>
             <i class="fa fa-sort-amount-desc" aria-hidden="true" ng-show="isDescOrder" ng-click="setAscOrder()"></i>
@@ -35,33 +32,32 @@
 			  &nbsp;<img src="./assets/img/loading.gif" data-ng-show="loading">
           </span>
 
-					<button class="btn btn-primary" style="float: right;margin-right: 10px;height: 30px;font-size: 12px;"
+					<!--<button class="btn btn-primary" style="float: right;margin-right: 5px;height: 30px;font-size: 12px;"
 							data-disabled="!loading" data-ng-show="display" data-ng-click="searchService()">
 						<span class="spinner-border spinner-border-sm"></span>
 						查询
-					</button>
+					</button>-->
 
-					<!--<button class="btn btn-outline-primary" style="float: right;margin-right: 10px;height: 30px;font-size: 12px;" ng-click="setDescOrder()"
+					<!--<button class="btn btn-outline-primary" style="float: right;margin-right: 5px;height: 30px;font-size: 12px;" ng-click="setDescOrder()"
 							ng-if="!isDescOrder">降序</button>
 
-					<button class="btn btn-outline-primary" style="float: right;margin-right: 10px;height: 30px;font-size: 12px;" ng-click="setAscOrder()"
+					<button class="btn btn-outline-primary" style="float: right;margin-right: 5px;height: 30px;font-size: 12px;" ng-click="setAscOrder()"
 							ng-if="isDescOrder">升序</button>-->
 
+					<select class="form-control" id="refreshInterval"
+							style="height:30px;width: 100px; max-width: 100px !important;"
+							ng-model="selectedItem"
+							ng-init="selectedItem = refreshItems[0]"
+							ng-change="onRefreshIntervalChange(selectedItem)"
+							ng-options="x.text for x in refreshItems">
+					</select>
 
-					<!--<div class="form-group" style="float: right;margin-right: 10px;" ng-show="quick">
-						<label id="showSelectedTime"></label>
-						&nbsp;&nbsp;
-						<button type="button" class="btn btn-default" ng-click="quickOnSetTime(1, 60)">+1h</button>
-						<button type="button" class="btn btn-default" ng-click="quickOnSetTime(1, 30)">+30m</button>
-						<button type="button" class="btn btn-default" ng-click="quickOnSetTime(1, 5)">+5m</button>
-						<button type="button" class="btn btn-default" ng-click="quickOnSetTime(0, 0)">now</button>
-						<button type="button" class="btn btn-default" ng-click="quickOnSetTime(-1, 5)">-5m</button>
-						<button type="button" class="btn btn-default" ng-click="quickOnSetTime(-1, 30)">-30m</button>
-						<button type="button" class="btn btn-default" ng-click="quickOnSetTime(-1, 60)">-1h</button>
-					</div>-->
+					<input class="form-control witdh-150" placeholder="关键字" ng-model="serviceQuery"
+						   ng-blur="searchService()"
+						   style="margin-right: 5px;">
 
 					<div class="dropdown form-group dropdown-end-parent"
-						 style="width: 195px;float: right;margin-right: 10px;" ng-show="custom">
+						 style="width: 195px;float: right;margin-right: 5px;" ng-show="custom">
 						<a class="dropdown-toggle" style="text-decoration:none;"
 						   id="dropdownEnd" role="button" data-toggle="dropdown" data-target=".dropdown-end-parent">
 							<div class="input-group date">
@@ -80,7 +76,7 @@
 					</div>
 
 					<div class="dropdown form-group dropdown-start-parent"
-						 style="width: 195px;float: right;margin-right: 10px;" ng-show="custom">
+						 style="width: 195px;float: right;margin-right: 5px;" ng-show="custom">
 						<a class="dropdown-toggle" style="text-decoration:none;"
 						   id="dropdownStart" role="button" data-toggle="dropdown" data-target=".dropdown-start-parent">
 							<div class="input-group date">
@@ -97,25 +93,14 @@
 						</ul>
 					</div>
 
-					<select class="form-control" id="refreshInterval"
-							style="height:30px;width: 100px; max-width: 100px !important;"
-							ng-model="selectedItem"
-							ng-init="selectedItem = refreshItems[0]"
-							ng-change="onRefreshIntervalChange(selectedItem)"
-							ng-options="x.text for x in refreshItems">
-					</select>
-
-					<input class="form-control witdh-200" placeholder="关键字" ng-model="serviceQuery" ng-change="searchService()"
-						   style="margin-right: 10px;">
-
-					<div class="form-group" style="float: right;margin-right: 10px;margin-top:5px;" ng-show="quick">
-						[<a ng-click="quickOnSetTime(-1, 1440)">-1d</a>]
-						[<a ng-click="quickOnSetTime(-1, 60)">-1h</a>]
-						[<a ng-click="quickOnSetTime(-1, 5)">-5m</a>]
-						[<a ng-click="quickOnSetTime(1, 5)">+5m</a>]
-						[<a ng-click="quickOnSetTime(1, 60)">+1h</a>]
-						[<a ng-click="quickOnSetTime(1, 1440)">+1d</a>]
-						[<a ng-click="quickOnSetTime(0, 0)">now</a>]
+					<div class="form-group" style="float: right;margin-right: 5px;" ng-show="quick">
+						<button type="button" class="btn btn-success" ng-click="quickOnSetTime(-1, 1440)">-1d</button>
+						<button type="button" class="btn btn-success" ng-click="quickOnSetTime(-1, 60)">-1h</button>
+						<button type="button" class="btn btn-success" ng-click="quickOnSetTime(-1, 5)">-5m</button>
+						<button type="button" class="btn btn-warning" ng-click="quickOnSetTime(1, 5)">+5m</button>
+						<button type="button" class="btn btn-warning" ng-click="quickOnSetTime(1, 60)">+1h</button>
+						<button type="button" class="btn btn-warning" ng-click="quickOnSetTime(1, 1440)">+1d</button>
+						<button type="button" class="btn btn-primary" ng-click="quickOnSetTime(0, 0)">now</button>
 					</div>
 				</div>
 				<!--.tools-header -->
@@ -189,7 +174,12 @@
 						pagination-id="servicesPagination"></li>
 				</div>
 
-
+				<div class="pagination-footer" style="float:right;margin-right:5px;font-size:12px;">
+					<dir-pagination-controls boundary-links="true" template-url="app/views/pagination.tpl.html" pagination-id="servicesPagination"
+											 on-page-change="pageChanged(newPageNumber)">
+					</dir-pagination-controls>
+					<!-- .tools -->
+				</div>
 				<!-- pagination-footer -->
 				<!--<div class="row" style="margin-bottom:20px"></div>-->
 			</div>
