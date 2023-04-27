@@ -71,6 +71,8 @@
 		<maven-release-plugin.version>3.0.0-M7</maven-release-plugin.version>
 		<versions-maven-plugin.version>2.7</versions-maven-plugin.version>
 		<git-commit-id-plugin.version>4.9.10</git-commit-id-plugin.version>
+		<sonar.organization>shiyindaxiaojie</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <modules>
