@@ -13,8 +13,6 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 		$scope.startTime = new Date();
 		$scope.endTime = new Date();
 		$scope.startTime.setMinutes($scope.endTime.getMinutes() - timeInterval);
-		$scope.startTimeFmt = formatDate($scope.startTime);
-		$scope.endTimeFmt = formatDate($scope.endTime);
 		$scope.endDateBeforeRender = endDateBeforeRender;
 		$scope.endDateOnSetTime = endDateOnSetTime;
 		$scope.startDateBeforeRender = startDateBeforeRender;
@@ -64,14 +62,15 @@ app.controller('MetricCtl', ['$scope', '$stateParams', 'MetricService', '$interv
 
 		$scope.quickOnSetTime = function(calculate, offset) {
 			if (calculate === 0) {
+				$scope.startTime = new Date();
 				$scope.endTime = new Date();
 				$scope.startTime.setMinutes($scope.endTime.getMinutes() - timeInterval);
 			} else {
 				let offsetTime = calculate > 0?
 					$scope.endTime.getMinutes() + offset:
 					$scope.endTime.getMinutes() - offset;
-				$scope.startTime.setMinutes(offsetTime - timeInterval);
 				$scope.endTime.setMinutes(offsetTime);
+				$scope.startTime.setMinutes(offsetTime - timeInterval);
 			}
 			queryIdentityDatas();
 		}
