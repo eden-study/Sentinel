@@ -20,9 +20,11 @@ import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
 import com.alibaba.csp.sentinel.dashboard.rule.DynamicRulePublisher;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.csp.sentinel.util.AssertUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.nacos.api.config.ConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -56,12 +58,10 @@ public abstract class NacosPublisherTemplate<T> implements DynamicRulePublisher<
 			return;
 		}
 
-		log.info("Publish rules from nacos, app: {}, rule data: {}",
-			machineEntity.getApp(), rules);
-		configService.publishConfig(
-			getDataId(machineEntity.getApp()),
-			nacosRuleProperties.getGroupId(),
-			converter.convert(rules));
+		String rulesData = CollectionUtils.isEmpty(rules) ? "[]" : converter.convert(rules);
+		log.info("Publish rules to nacos, app: {}, rule data: {}", machineEntity.getApp(), rulesData);
+		configService.publishConfig(getDataId(machineEntity.getApp()), nacosRuleProperties.getGroupId(),
+			rulesData);
 	}
 
 	public abstract String getDataId(String app);

@@ -20,6 +20,7 @@ import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
 import com.alibaba.csp.sentinel.dashboard.rule.DynamicRulePublisher;
 import com.alibaba.csp.sentinel.util.StringUtil;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +50,7 @@ public abstract class MemoryPublisherTemplate<T> implements DynamicRulePublisher
 			return;
 		}
 		Set<MachineInfo> set = appManagement.getDetailApp(machineEntity.getApp()).getMachines();
+
 
 		log.info("Update rules in memory, app: {}, rule data: {}", machineEntity.getApp(), rules);
 

@@ -20,6 +20,8 @@ import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
 import com.alibaba.csp.sentinel.dashboard.rule.DynamicRulePublisher;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.csp.sentinel.util.AssertUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.influxdb.client.JSON;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
@@ -68,9 +70,9 @@ public abstract class ZookeeperPublisherTemplate<T> implements DynamicRulePublis
 				.withMode(CreateMode.PERSISTENT)
 				.forPath(path, null);
 		}
-		log.info("Publish rules from zookeeper, app: {}, rule data: {}", machineEntity.getApp(), rules);
-		byte[] data =
-			CollectionUtils.isEmpty(rules) ? "[]".getBytes() : converter.convert(rules).getBytes();
+		String rulesData = CollectionUtils.isEmpty(rules) ? "[]" : converter.convert(rules);
+		log.info("Publish rules to zookeeper, app: {}, rule data: {}", machineEntity.getApp(), rulesData);
+		byte[] data = rulesData.getBytes();
 		zkClient.setData().forPath(path, data);
 	}
 

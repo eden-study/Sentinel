@@ -20,11 +20,13 @@ import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
 import com.alibaba.csp.sentinel.dashboard.rule.DynamicRulePublisher;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.csp.sentinel.util.AssertUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
 import com.ctrip.framework.apollo.openapi.dto.NamespaceReleaseDTO;
 import com.ctrip.framework.apollo.openapi.dto.OpenItemDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -58,13 +60,14 @@ public abstract class ApolloPublisherTemplate<T> implements DynamicRulePublisher
 			return;
 		}
 
-		log.info("Publish rules from apollo, app: {}, rule data: {}", machineEntity.getApp(), rules);
+		String rulesData = CollectionUtils.isEmpty(rules) ? "[]" : converter.convert(rules);
+		log.info("Publish rules to apollo, app: {}, rule data: {}", machineEntity.getApp(), rulesData);
 
 		// Increase the configuration
 		String dataId = getDataId(machineEntity.getApp());
 		OpenItemDTO openItemDTO = new OpenItemDTO();
 		openItemDTO.setKey(dataId);
-		openItemDTO.setValue(converter.convert(rules));
+		openItemDTO.setValue(rulesData);
 		openItemDTO.setComment("Program auto-join");
 		openItemDTO.setDataChangeCreatedBy("sentinel");
 		apolloOpenApiClient.createOrUpdateItem(
