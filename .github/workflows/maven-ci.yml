@@ -6,7 +6,7 @@ name: Maven CI
 on:
   push:
     branches:
-      - master
+      - main
       - 1.8.x
     paths-ignore:
       - '**.md'
@@ -41,15 +41,18 @@ jobs:
       - name: Build with Maven
         run: |
           chmod +x mvnw
-          ./mvnw -ntp -pl sentinel-dashboard package -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
+          ./mvnw -ntp -pl sentinel-dashboard package -DskipTests -T 4C -s $GITHUB_WORKSPACE/settings.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Publish to Docker Hub
         run: |
-          echo "<settings><profiles><profile><id>github</id><properties><docker.username>$DOCKER_USERNAME</docker.username><docker.password>$DOCKER_PASSWORD</docker.password></properties></profile></profiles></settings>" > $GITHUB_WORKSPACE/settings.xml
-          chmod +x mvnw
-          ./mvnw -ntp -Pgithub -pl sentinel-dashboard jib:build -Dimage=shiyindaxiaojie/sentinel-dashboard -Djib.disableUpdateChecks=true -DskipTests -U -T 4C -s $GITHUB_WORKSPACE/settings.xml
+          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+          docker build -f docker/Dockerfile -t $DOCKER_IMAGE:$DOCKER_VERSION -t $DOCKER_IMAGE:latest .
+          docker push $DOCKER_IMAGE:$DOCKER_VERSION
+          docker push $DOCKER_IMAGE:latest
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_IMAGE: shiyindaxiaojie/sentinel-dashboard
+          DOCKER_VERSION: 1.8.6
