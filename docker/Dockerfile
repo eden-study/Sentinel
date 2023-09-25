@@ -5,8 +5,9 @@ FROM openjdk:11-jdk-slim as builder
 WORKDIR /app
 ARG MODULE=sentinel-dashboard
 
-# 复制应用程序 JAR 文件
+# 复制必要文件
 COPY $MODULE/target/${MODULE}.jar application.jar
+COPY docker/entrypoint.sh entrypoint.sh
 
 # 使用 Spring Boot 的分层模式提取 JAR 文件的依赖项
 RUN java -Djarmode=layertools -jar application.jar extract
@@ -16,16 +17,20 @@ FROM openjdk:11-jdk-slim
 
 # 定义镜像元数据和环境变量
 LABEL maintainer="梦想歌 <shiyindaxiaojie@gmail.com>"
-LABEL version="1.0.0"
+LABEL version="1.8.6"
 ARG USER=tmpuser
 ARG GROUP=tmpgroup
 ARG HOME=/app
 ARG LOG=$HOME/logs
 ENV START_DELAY_SECS 1
-ENV JAVA_OPTS "-Xmx512m -Xms512m -Xmn256m"
+ENV JVM_DEBUG "n"
+ENV JVM_XMS "1g"
+ENV JVM_XMX "1g"
+ENV JVM_XMN "512m"
+ENV JVM_MS "128m"
+ENV JVM_MMS "320m"
 ENV SPRING_PROFILES_ACTIVE "dev"
 ENV SERVER_PORT "8080"
-ENV MANAGEMENT_SERVER_PORT "9080"
 
 # 创建普通用户并设置工作目录
 RUN groupadd -g 1000 $GROUP \
@@ -42,6 +47,8 @@ COPY --from=builder /app/organization-dependencies ./
 COPY --from=builder /app/modules-dependencies ./
 COPY --from=builder /app/snapshot-dependencies/ ./
 COPY --from=builder /app/application/ ./
+COPY --from=builder /app/entrypoint.sh ./
+RUN chmod +x entrypoint.sh
 
 # 设置容器用户并创建日志目录
 USER $USER
@@ -51,5 +58,5 @@ RUN mkdir $LOG \
   && ln -sf /dev/stderr $LOG/entrypoint.out
 
 # 设置启动入口和端口
-EXPOSE $SERVER_PORT $MANAGEMENT_SERVER_PORT
-ENTRYPOINT echo "The application will start in ${START_DELAY_SECS}s..." && sleep ${START_DELAY_SECS} && exec java $JAVA_OPTS -noverify -XX:+AlwaysPreTouch -Djava.security.egd=file:/dev/./urandom "org.springframework.boot.loader.JarLauncher" "$@"
+EXPOSE $SERVER_PORT
+ENTRYPOINT ["./entrypoint.sh"]
