@@ -5,7 +5,6 @@ import com.alibaba.csp.sentinel.dashboard.datasource.entity.MetricEntity;
 import com.alibaba.csp.sentinel.dashboard.repository.metric.MetricsRepository;
 import com.alibaba.csp.sentinel.util.AssertUtil;
 import com.alibaba.csp.sentinel.util.StringUtil;
-import com.google.common.collect.Lists;
 import com.influxdb.client.InfluxDBClient;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.query.FluxRecord;
@@ -85,7 +84,7 @@ public class InfluxDBMetricsEntityRepository implements MetricsRepository<Metric
 	 */
 	@Override
 	public List<MetricEntity> queryByAppAndResourceBetween(String app, String resource, long startTime, long endTime) {
-		List<MetricEntity> results = Lists.newArrayList();
+		List<MetricEntity> results = new ArrayList<>();
 		if (StringUtil.isBlank(app)) {
 			return results;
 		}
@@ -125,7 +124,7 @@ public class InfluxDBMetricsEntityRepository implements MetricsRepository<Metric
 	 */
 	@Override
 	public List<String> listResourcesOfApp(String app) {
-		List<String> results = Lists.newArrayList();
+		List<String> results = new ArrayList<>();
 		if (StringUtil.isBlank(app)) {
 			return results;
 		}

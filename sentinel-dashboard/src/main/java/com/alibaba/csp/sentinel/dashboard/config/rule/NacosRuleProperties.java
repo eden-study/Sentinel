@@ -33,6 +33,16 @@ public class NacosRuleProperties {
 	private String groupId = "SENTINEL_GROUP";
 
 	/**
+	 * Nacos 用户名
+	 */
+	private String username = "nacos";
+
+	/**
+	 * Nacos 密码
+	 */
+	private String password = "nacos";
+
+	/**
 	 * Nacos DataId 后缀
 	 */
 	private final DataIdSuffix dataIdSuffix = new DataIdSuffix();

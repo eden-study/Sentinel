@@ -18,8 +18,10 @@ package com.alibaba.csp.sentinel.dashboard.config.rule;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.*;
 import com.alibaba.csp.sentinel.dashboard.rule.nacos.*;
 import com.alibaba.csp.sentinel.datasource.Converter;
+import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigFactory;
 import com.alibaba.nacos.api.config.ConfigService;
+import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -50,8 +52,13 @@ public class NacosRuleAutoConfiguration {
 	@Bean
 	public ConfigService nacosConfigService() throws Exception {
 		Properties properties = new Properties();
-		properties.put("serverAddr", nacosRuleProperties.getServerAddr());
-		properties.put("namespace", nacosRuleProperties.getNamespace());
+		properties.put(PropertyKeyConst.SERVER_ADDR, nacosRuleProperties.getServerAddr());
+		properties.put(PropertyKeyConst.NAMESPACE, nacosRuleProperties.getNamespace());
+		if (StringUtils.isNotBlank(nacosRuleProperties.getUsername()) &&
+				StringUtils.isNotBlank(nacosRuleProperties.getPassword())) {
+			properties.put(PropertyKeyConst.USERNAME, nacosRuleProperties.getUsername());
+			properties.put(PropertyKeyConst.PASSWORD, nacosRuleProperties.getPassword());
+		}
 		return ConfigFactory.createConfigService(properties);
 	}
 
