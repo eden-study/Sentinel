@@ -55,4 +55,4 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_IMAGE: shiyindaxiaojie/sentinel-dashboard
-          DOCKER_VERSION: 1.8.6
+          DOCKER_VERSION: v1.8.6
