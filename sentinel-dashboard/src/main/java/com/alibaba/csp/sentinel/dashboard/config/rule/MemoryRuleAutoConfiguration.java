@@ -17,7 +17,8 @@ package com.alibaba.csp.sentinel.dashboard.config.rule;
 
 import com.alibaba.csp.sentinel.dashboard.client.SentinelApiClient;
 import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
-import com.alibaba.csp.sentinel.dashboard.rule.memory.*;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.memory.provider.*;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.memory.publisher.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -16,7 +16,8 @@
 package com.alibaba.csp.sentinel.dashboard.config.rule;
 
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.*;
-import com.alibaba.csp.sentinel.dashboard.rule.apollo.*;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.provider.*;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.publisher.*;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

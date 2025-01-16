@@ -16,7 +16,8 @@
 package com.alibaba.csp.sentinel.dashboard.config.rule;
 
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.*;
-import com.alibaba.csp.sentinel.dashboard.rule.zookeeper.*;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.zookeeper.provider.*;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.zookeeper.publisher.*;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;

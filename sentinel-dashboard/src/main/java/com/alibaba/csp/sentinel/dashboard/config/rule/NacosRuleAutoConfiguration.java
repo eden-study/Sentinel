@@ -16,7 +16,8 @@
 package com.alibaba.csp.sentinel.dashboard.config.rule;
 
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.*;
-import com.alibaba.csp.sentinel.dashboard.rule.nacos.*;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.provider.*;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.publisher.*;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigFactory;
