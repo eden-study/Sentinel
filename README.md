@@ -8,7 +8,7 @@
 
 # Sentinel 流量治理平台
 
-![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/images/readme/language-java-blue.svg) [![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/images/readme/license-apache2.0-red.svg)][license-apache2.0] [![](https://github.com/shiyindaxiaojie/Sentinel/actions/workflows/maven-ci.yml/badge.svg?branch=master)][github-action] [![](https://sonarcloud.io/api/project_badges/measure?project=shiyindaxiaojie_Sentinel&metric=alert_status)][sonarcloud-dashboard]
+![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/images/readme/language-java-blue.svg) [![](https://cdn.jsdelivr.net/gh/shiyindaxiaojie/images/readme/license-apache2.0-red.svg)][license-apache2.0] [![](https://github.com/shiyindaxiaojie/Sentinel/actions/workflows/maven-ci.yml/badge.svg?branch=master)][github-action] [![](https://sonarcloud.io/api/project_badges/measure?project=shiyindaxiaojie_Sentinel&metric=alert_status)][sonarcloud-dashboard] [<img src="https://api.gitsponsors.com/api/badge/img?id=427550539" height="20">](https://api.gitsponsors.com/api/badge/link?p=f4MOfJnZFZJctyNku60flTab9z/6DYv9K8fN66Mb3eSUwrrWeWbxEdkBFqA/7+RUENNaV/TR2A473Ahs6cBrB8g7zFFDar66aKLVq0Thcwi1OqQkNen30+Aax+4cxcOPWzumhkOlM4LCa0Q/kn6JNQ==)
 
 Sentinel 是阿里巴巴开源的流量治理平台，提供了 `流量控制`、`熔断降级`、`系统负载保护`、`黑白名单访问控制` 等功能。在实际的生产需求中，笔者进行了部分扩展：
 1. 流控规则持久化：适配 `Apollo`、`Nacos`、`Zookeeper`
