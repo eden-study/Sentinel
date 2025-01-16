@@ -162,7 +162,7 @@ spring:
       http-method-specify: true # 兼容 RESTful
       eager: true # 立刻刷新到 Dashboard
       transport:
-        dashboard: localhost:8090
+        dashboard: localhost:8080
       datasource:
         flow:
           nacos:
