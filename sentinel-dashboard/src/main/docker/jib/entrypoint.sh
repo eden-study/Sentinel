@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 JAVA_MAJOR_VERSION=$(java -version 2>&1 | sed -E -n 's/.* version "([0-9]*).*$/\1/p')
 
@@ -88,30 +88,30 @@ JAVA_OPTS="${JAVA_OPTS} -Dsentinel.rule.nacos.username=${SENTINEL_RULE_NACOS_USE
 JAVA_OPTS="${JAVA_OPTS} -Dsentinel.rule.nacos.password=${SENTINEL_RULE_NACOS_PASSWORD:nacos}"
 
 # Apollo 存储规则，如果您设置了 sentinel.metrics.type=apollo，需要调整相关配置
-JAVA_OPTS="${JAVA_OPTS} -Dsentinel.rule.apollo.portal-url=${SENTINEL_RULE_APOLLO_PORTAL_URL:http://localhost:10034}"
+JAVA_OPTS="${JAVA_OPTS} -Dsentinel.rule.apollo.portal-url=${SENTINEL_RULE_APOLLO_PORTAL_URL}"
 JAVA_OPTS="${JAVA_OPTS} -Dsentinel.rule.apollo.token=${SENTINEL_RULE_APOLLO_TOKEN}"
 JAVA_OPTS="${JAVA_OPTS} -Dsentinel.rule.apollo.env=${SENTINEL_RULE_APOLLO_ENV}"
 
 # Zookeeper 存储规则，如果您设置了 sentinel.metrics.type=zookeeper，需要调整相关配置
-JAVA_OPTS="${JAVA_OPTS} -Dsentinel.rule.zookeeper.connect-string=${SENTINEL_RULE_ZOOKEEPER_CONNECT_STRING:localhost:2181}"
-JAVA_OPTS="${JAVA_OPTS} -Dsentinel.rule.zookeeper.root-path=${SENTINEL_RULE_ZOOKEEPER_ROOT_PATH:/sentinel}"
+JAVA_OPTS="${JAVA_OPTS} -Dsentinel.rule.zookeeper.connect-string=${SENTINEL_RULE_ZOOKEEPER_CONNECT_STRING}"
+JAVA_OPTS="${JAVA_OPTS} -Dsentinel.rule.zookeeper.root-path=${SENTINEL_RULE_ZOOKEEPER_ROOT_PATH}"
 
 # 监控存储类型，可选项：memory（默认）、influxdb（推荐）、elasticsearch
 JAVA_OPTS="${JAVA_OPTS} -Dsentinel.metrics.type=${SENTINEL_METRICS_TYPE:memory}"
 
 # InfluxDB 存储监控数据，如果您设置了 sentinel.metrics.type=influxdb，需要调整相关配置
-JAVA_OPTS="${JAVA_OPTS} -Dinflux.url=${INFLUX_URL:http://localhost:8086/}"
-JAVA_OPTS="${JAVA_OPTS} -Dinflux.token=${INFLUX_TOKEN:UfgaW37A93PkncmJum25G7M2QkBg6xqqjGthh-o-UIVIynC_-Q7RFWlTtEpMqhGLCuAsX64k3Isc2uN33YgElw==}"
+JAVA_OPTS="${JAVA_OPTS} -Dinflux.url=${INFLUX_URL}"
+JAVA_OPTS="${JAVA_OPTS} -Dinflux.token=${INFLUX_TOKEN}"
 JAVA_OPTS="${JAVA_OPTS} -Dinflux.org=${INFLUX_ORG:sentinel}"
 JAVA_OPTS="${JAVA_OPTS} -Dinflux.bucket=${INFLUX_BUCKET:sentinel}"
 JAVA_OPTS="${JAVA_OPTS} -Dinflux.log-level=${INFLUX_LOG_LEVEL:NONE}"
-JAVA_OPTS="${JAVA_OPTS} -Dinflux.read-timeout=${INFLUX_READ_TIMEOUT:10s}"
-JAVA_OPTS="${JAVA_OPTS} -Dinflux.write-timeout=${INFLUX_WRITE_TIMEOUT:10s}"
-JAVA_OPTS="${JAVA_OPTS} -Dinflux.connect-timeout=${INFLUX_CONNECT_TIMEOUT:10s}"
+JAVA_OPTS="${JAVA_OPTS} -Dinflux.read-timeout=${INFLUX_READ_TIMEOUT}"
+JAVA_OPTS="${JAVA_OPTS} -Dinflux.write-timeout=${INFLUX_WRITE_TIMEOUT}"
+JAVA_OPTS="${JAVA_OPTS} -Dinflux.connect-timeout=${INFLUX_CONNECT_TIMEOUT}"
 
 # Elasticsearch 存储监控数据，如果您设置了 sentinel.metrics.type=elasticsearch，需要调整相关配置
 JAVA_OPTS="${JAVA_OPTS} -Dsentinel.metrics.elasticsearch.index-name=${SENTINEL_METRICS_ELASTICSEARCH_INDEX_NAME:sentinel_metric}"
-JAVA_OPTS="${JAVA_OPTS} -Dspring.elasticsearch.rest.uris=${SPRING_ELASTICSEARCH_REST_URIS:http://localhost:9200}"
+JAVA_OPTS="${JAVA_OPTS} -Dspring.elasticsearch.rest.uris=${SPRING_ELASTICSEARCH_REST_URIS}"
 JAVA_OPTS="${JAVA_OPTS} -Dspring.elasticsearch.rest.connection-timeout=${SPRING_ELASTICSEARCH_REST_CONNECTION_TIMEOUT:3000}"
 JAVA_OPTS="${JAVA_OPTS} -Dspring.elasticsearch.rest.read-timeout=${SPRING_ELASTICSEARCH_REST_READ_TIMEOUT:5000}"
 JAVA_OPTS="${JAVA_OPTS} -Dspring.elasticsearch.rest.username=${SPRING_ELASTICSEARCH_REST_USERNAME}"
@@ -123,7 +123,5 @@ JAVA_OPTS="${JAVA_OPTS} -Dsentinel.metrics.sender.kafka.topic=${SENTINEL_METRICS
 JAVA_OPTS="${JAVA_OPTS} -Dspring.kafka.producer.bootstrap-servers=${SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS:localhost:9092}"
 JAVA_OPTS="${JAVA_OPTS} -Dspring.kafka.producer.batch-size=${SPRING_KAFKA_PRODUCER_BATCH_SIZE:4096}"
 JAVA_OPTS="${JAVA_OPTS} -Dspring.kafka.producer.buffer-memory=${SPRING_KAFKA_PRODUCER_BUFFER_MEMORY:40960}"
-JAVA_OPTS="${JAVA_OPTS} -Dspring.kafka.producer.key-serializer=${SPRING_KAFKA_PRODUCER_KEY_SERIALIZER:org.apache.kafka.common.serialization.StringSerializer}"
-JAVA_OPTS="${JAVA_OPTS} -Dspring.kafka.producer.value-serializer=${SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER:org.apache.kafka.common.serialization.StringSerializer}"
 
 exec java ${JAVA_OPTS} -noverify -Djava.security.egd=file:/dev/./urandom -cp /app/resources/:/app/classes/:/app/libs/* "org.ylzl.eden.demo.ColaApplication" "$@"

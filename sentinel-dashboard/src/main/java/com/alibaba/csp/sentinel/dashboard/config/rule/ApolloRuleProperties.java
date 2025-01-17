@@ -78,5 +78,10 @@ public class ApolloRuleProperties {
 		 * 集群流控规则
 		 */
 		private String clusterRule = "-cluster-rule";
+
+		/**
+		 * 网关流控规则
+		 */
+		private String gatewayFlowRule = "-gateway-flow-rule";
 	}
 }
