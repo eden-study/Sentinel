@@ -18,7 +18,7 @@ package com.alibaba.csp.sentinel.dashboard.repository.extensions.memory.publishe
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
 import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRulePublisher;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RulePublisher;
 import com.alibaba.csp.sentinel.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ import java.util.Set;
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public abstract class MemoryPublisherTemplate<T> implements DynamicRulePublisher<List<T>> {
+public abstract class MemoryPublisherTemplate<T> implements RulePublisher<List<T>> {
 
 	private static final Logger log = LoggerFactory.getLogger(MemoryPublisherTemplate.class);
 

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.publisher;
+package com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.provider;
 
 import com.alibaba.csp.sentinel.dashboard.config.rule.ApolloRuleProperties;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.ApiDefinitionEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity;
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.ApolloRuleUtils;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
@@ -28,20 +28,20 @@ import java.util.List;
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public class GatewayFlowRuleApolloPublisher extends ApolloPublisherTemplate<GatewayFlowRuleEntity> {
+public class GatewayApiApolloProvider extends ApolloProviderTemplate<ApiDefinitionEntity> {
 
 	private final ApolloRuleProperties apolloRuleProperties;
 
-	public GatewayFlowRuleApolloPublisher(
+	public GatewayApiApolloProvider(
 		ApolloRuleProperties apolloRuleProperties,
 		ApolloOpenApiClient apolloOpenApiClient,
-		Converter<List<GatewayFlowRuleEntity>, String> converter) {
+		Converter<String, List<ApiDefinitionEntity>> converter) {
 		super(apolloRuleProperties, apolloOpenApiClient, converter);
 		this.apolloRuleProperties = apolloRuleProperties;
 	}
 
 	@Override
 	public String getDataId(String app) {
-		return ApolloRuleUtils.getDataId(app, apolloRuleProperties.getDataId().getGatewayFlowRule());
+		return ApolloRuleUtils.getDataId(app, apolloRuleProperties.getDataId().getGatewayApi());
 	}
 }

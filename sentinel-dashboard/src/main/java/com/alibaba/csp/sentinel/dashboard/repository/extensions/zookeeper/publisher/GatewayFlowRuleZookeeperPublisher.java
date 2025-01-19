@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.publisher;
+package com.alibaba.csp.sentinel.dashboard.repository.extensions.zookeeper.publisher;
 
-import com.alibaba.csp.sentinel.dashboard.config.rule.ApolloRuleProperties;
+import com.alibaba.csp.sentinel.dashboard.config.rule.ZookeeperRuleProperties;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.ApolloRuleUtils;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.zookeeper.ZookeeperRuleUtils;
 import com.alibaba.csp.sentinel.datasource.Converter;
-import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
+import org.apache.curator.framework.CuratorFramework;
 
 import java.util.List;
 
@@ -28,20 +28,21 @@ import java.util.List;
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public class GatewayFlowRuleApolloPublisher extends ApolloPublisherTemplate<GatewayFlowRuleEntity> {
+public class GatewayFlowRuleZookeeperPublisher extends ZookeeperPublisherTemplate<GatewayFlowRuleEntity> {
 
-	private final ApolloRuleProperties apolloRuleProperties;
+	private final ZookeeperRuleProperties zookeeperRuleProperties;
 
-	public GatewayFlowRuleApolloPublisher(
-		ApolloRuleProperties apolloRuleProperties,
-		ApolloOpenApiClient apolloOpenApiClient,
+	public GatewayFlowRuleZookeeperPublisher(
+		ZookeeperRuleProperties zookeeperRuleProperties,
+		CuratorFramework zkClient,
 		Converter<List<GatewayFlowRuleEntity>, String> converter) {
-		super(apolloRuleProperties, apolloOpenApiClient, converter);
-		this.apolloRuleProperties = apolloRuleProperties;
+		super(zookeeperRuleProperties, zkClient, converter);
+		this.zookeeperRuleProperties = zookeeperRuleProperties;
 	}
 
 	@Override
-	public String getDataId(String app) {
-		return ApolloRuleUtils.getDataId(app, apolloRuleProperties.getDataId().getGatewayFlowRule());
+	public String getPath(String app) {
+		return ZookeeperRuleUtils.getPath(zookeeperRuleProperties.getRootPath(), app,
+			zookeeperRuleProperties.getRulePath().getGatewayFlowRule());
 	}
 }

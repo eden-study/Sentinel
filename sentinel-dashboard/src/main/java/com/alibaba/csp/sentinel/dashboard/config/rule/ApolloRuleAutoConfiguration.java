@@ -15,6 +15,8 @@
  */
 package com.alibaba.csp.sentinel.dashboard.config.rule;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.ApiDefinitionEntity;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.*;
 import com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.provider.*;
 import com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.publisher.*;
@@ -120,5 +122,33 @@ public class ApolloRuleAutoConfiguration {
 		ApolloOpenApiClient apolloOpenApiClient,
 		Converter<List<SystemRuleEntity>, String> converter) {
 		return new SystemRuleApolloPublisher(apolloRuleProperties, apolloOpenApiClient, converter);
+	}
+
+	@Bean
+	public GatewayApiApolloProvider gatewayApiApolloProvider(
+		ApolloOpenApiClient apolloOpenApiClient,
+		Converter<String, List<ApiDefinitionEntity>> converter) {
+		return new GatewayApiApolloProvider(apolloRuleProperties, apolloOpenApiClient, converter);
+	}
+
+	@Bean
+	public GatewayApiApolloPublisher gatewayApiApolloPublisher(
+		ApolloOpenApiClient apolloOpenApiClient,
+		Converter<List<ApiDefinitionEntity>, String> converter) {
+		return new GatewayApiApolloPublisher(apolloRuleProperties, apolloOpenApiClient, converter);
+	}
+
+	@Bean
+	public GatewayFlowRuleApolloProvider gatewayFlowRuleApolloProvider(
+		ApolloOpenApiClient apolloOpenApiClient,
+		Converter<String, List<GatewayFlowRuleEntity>> converter) {
+		return new GatewayFlowRuleApolloProvider(apolloRuleProperties, apolloOpenApiClient, converter);
+	}
+
+	@Bean
+	public GatewayFlowRuleApolloPublisher gatewayFlowRuleApolloPublisher(
+		ApolloOpenApiClient apolloOpenApiClient,
+		Converter<List<GatewayFlowRuleEntity>, String> converter) {
+		return new GatewayFlowRuleApolloPublisher(apolloRuleProperties, apolloOpenApiClient, converter);
 	}
 }

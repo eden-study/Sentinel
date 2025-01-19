@@ -15,13 +15,20 @@
  */
 package com.alibaba.csp.sentinel.dashboard.config.rule;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.ApiDefinitionEntity;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.*;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.provider.GatewayApiApolloProvider;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.provider.GatewayFlowRuleApolloProvider;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.publisher.GatewayApiApolloPublisher;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.publisher.GatewayFlowRuleApolloPublisher;
 import com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.provider.*;
 import com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.publisher.*;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigFactory;
 import com.alibaba.nacos.api.config.ConfigService;
+import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -121,5 +128,29 @@ public class NacosRuleAutoConfiguration {
 	public SystemRuleNacosPublisher systemRuleNacosPublisher(
 		ConfigService configService, Converter<List<SystemRuleEntity>, String> converter) {
 		return new SystemRuleNacosPublisher(nacosRuleProperties, configService, converter);
+	}
+
+	@Bean
+	public GatewayApiNacosProvider gatewayApiNacosProvider(
+		ConfigService configService, Converter<String, List<ApiDefinitionEntity>> converter) {
+		return new GatewayApiNacosProvider(nacosRuleProperties, configService, converter);
+	}
+
+	@Bean
+	public GatewayApiNacosPublisher gatewayApiNacosPublisher(
+		ConfigService configService, Converter<List<ApiDefinitionEntity>, String> converter) {
+		return new GatewayApiNacosPublisher(nacosRuleProperties, configService, converter);
+	}
+
+	@Bean
+	public GatewayFlowRuleNacosProvider gatewayFlowRuleNacosProvider(
+		ConfigService configService, Converter<String, List<GatewayFlowRuleEntity>> converter) {
+		return new GatewayFlowRuleNacosProvider(nacosRuleProperties, configService, converter);
+	}
+
+	@Bean
+	public GatewayFlowRuleNacosPublisher gatewayFlowRuleNacosPublisher(
+		ConfigService configService, Converter<List<GatewayFlowRuleEntity>, String> converter) {
+		return new GatewayFlowRuleNacosPublisher(nacosRuleProperties, configService, converter);
 	}
 }

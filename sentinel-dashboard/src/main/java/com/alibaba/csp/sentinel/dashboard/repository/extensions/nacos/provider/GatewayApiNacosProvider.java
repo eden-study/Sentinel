@@ -16,46 +16,32 @@
 package com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.provider;
 
 import com.alibaba.csp.sentinel.dashboard.config.rule.NacosRuleProperties;
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.RuleProvider;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.ApiDefinitionEntity;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.NacosRuleUtils;
 import com.alibaba.csp.sentinel.datasource.Converter;
-import com.alibaba.csp.sentinel.util.StringUtil;
 import com.alibaba.nacos.api.config.ConfigService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public abstract class NacosProviderTemplate<T> implements RuleProvider<List<T>> {
+public class GatewayApiNacosProvider extends NacosProviderTemplate<ApiDefinitionEntity> {
 
 	private final NacosRuleProperties nacosRuleProperties;
 
-	private final ConfigService configService;
-
-	private final Converter<String, List<T>> converter;
-
-	public NacosProviderTemplate(
+	public GatewayApiNacosProvider(
 		NacosRuleProperties nacosRuleProperties,
 		ConfigService configService,
-		Converter<String, List<T>> converter) {
+		Converter<String, List<ApiDefinitionEntity>> converter) {
+		super(nacosRuleProperties, configService, converter);
 		this.nacosRuleProperties = nacosRuleProperties;
-		this.configService = configService;
-		this.converter = converter;
 	}
 
 	@Override
-	public List<T> getRules(MachineEntity machineEntity) throws Exception {
-		String rules =
-			configService.getConfig(
-				getDataId(machineEntity.getApp()), nacosRuleProperties.getGroupId(), 3000);
-		if (StringUtil.isEmpty(rules)) {
-			return new ArrayList<>();
-		}
-		return converter.convert(rules);
+	public String getDataId(String app) {
+		return NacosRuleUtils.getDataId(app, nacosRuleProperties.getDataIdSuffix().getGatewayApi());
 	}
-
-	public abstract String getDataId(String app);
 }

@@ -17,7 +17,7 @@ package com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.publisher
 
 import com.alibaba.csp.sentinel.dashboard.config.rule.NacosRuleProperties;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRulePublisher;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RulePublisher;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.csp.sentinel.util.AssertUtil;
 import com.alibaba.nacos.api.config.ConfigService;
@@ -31,7 +31,7 @@ import java.util.List;
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public abstract class NacosPublisherTemplate<T> implements DynamicRulePublisher<List<T>> {
+public abstract class NacosPublisherTemplate<T> implements RulePublisher<List<T>> {
 
 	private static final Logger log = LoggerFactory.getLogger(NacosPublisherTemplate.class);
 

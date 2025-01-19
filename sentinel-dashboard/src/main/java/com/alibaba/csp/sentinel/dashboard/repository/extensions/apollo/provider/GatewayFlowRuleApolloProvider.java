@@ -42,6 +42,6 @@ public class GatewayFlowRuleApolloProvider extends ApolloProviderTemplate<Gatewa
 
 	@Override
 	public String getDataId(String app) {
-		return ApolloRuleUtils.getDataId(app, apolloRuleProperties.getDataId().getFlowRule());
+		return ApolloRuleUtils.getDataId(app, apolloRuleProperties.getDataId().getGatewayFlowRule());
 	}
 }

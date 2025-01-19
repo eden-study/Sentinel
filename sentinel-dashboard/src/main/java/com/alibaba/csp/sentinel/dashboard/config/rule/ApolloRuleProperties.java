@@ -83,5 +83,10 @@ public class ApolloRuleProperties {
 		 * 网关流控规则
 		 */
 		private String gatewayFlowRule = "-gateway-flow-rule";
+
+		/**
+		 * 网关API
+		 */
+		private String gatewayApi = "-gateway-api";
 	}
 }

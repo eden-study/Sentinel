@@ -18,7 +18,7 @@ package com.alibaba.csp.sentinel.dashboard.repository.extensions.memory.provider
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
 import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRuleProvider;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RuleProvider;
 import com.alibaba.csp.sentinel.util.StringUtil;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public abstract class MemoryProviderTemplate<T> implements DynamicRuleProvider<List<T>> {
+public abstract class MemoryProviderTemplate<T> implements RuleProvider<List<T>> {
 
 	private final AppManagement appManagement;
 

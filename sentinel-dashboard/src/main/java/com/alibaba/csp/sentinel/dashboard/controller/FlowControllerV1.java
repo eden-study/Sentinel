@@ -23,8 +23,8 @@ import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
 import com.alibaba.csp.sentinel.dashboard.repository.rule.RuleRepository;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRuleProvider;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRulePublisher;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RuleProvider;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RulePublisher;
 import com.alibaba.csp.sentinel.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,11 +54,12 @@ public class FlowControllerV1 {
 
 	@Autowired
 	private RuleRepository<FlowRuleEntity, Long> repository;
-	@Autowired
-	private DynamicRuleProvider<List<FlowRuleEntity>> dynamicRuleProvider;
 
 	@Autowired
-	private DynamicRulePublisher<List<FlowRuleEntity>> dynamicRulePublisher;
+	private RuleProvider<List<FlowRuleEntity>> ruleProvider;
+
+	@Autowired
+	private RulePublisher<List<FlowRuleEntity>> rulePublisher;
 
     @GetMapping("/rules")
     @AuthAction(PrivilegeType.READ_RULE)
@@ -274,14 +275,14 @@ public class FlowControllerV1 {
     }
 
 	private List<FlowRuleEntity> getRules(String app, String ip, Integer port) throws Exception {
-		return dynamicRuleProvider.getRules(MachineEntity.builder().app(app).ip(ip).port(port).build());
+		return ruleProvider.getRules(MachineEntity.builder().app(app).ip(ip).port(port).build());
 	}
 
 	private void publishRules(String app, String ip, Integer port) {
 		List<FlowRuleEntity> rules = repository.findAllByMachine(MachineInfo.of(app, ip, port));
 //         return sentinelApiClient.setFlowRuleOfMachineAsync(app, ip, port, rules);
 		try {
-			dynamicRulePublisher.publish(MachineEntity.builder().app(app).ip(ip).port(port).build(), rules);
+			rulePublisher.publish(MachineEntity.builder().app(app).ip(ip).port(port).build(), rules);
 		} catch (Exception e) {
 			logger.error("Publish flow rules failed after rule delete", e);
 		}

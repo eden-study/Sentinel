@@ -21,8 +21,8 @@ import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
 import com.alibaba.csp.sentinel.dashboard.repository.rule.RuleRepository;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRuleProvider;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRulePublisher;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RuleProvider;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RulePublisher;
 import com.alibaba.csp.sentinel.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,10 +48,10 @@ public class FlowControllerV2 {
     private RuleRepository<FlowRuleEntity, Long> repository;
 
     @Autowired
-    private DynamicRuleProvider<List<FlowRuleEntity>> dynamicRuleProvider;
+    private RuleProvider<List<FlowRuleEntity>> ruleProvider;
 
     @Autowired
-    private DynamicRulePublisher<List<FlowRuleEntity>> dynamicRulePublisher;
+    private RulePublisher<List<FlowRuleEntity>> rulePublisher;
 
     @GetMapping("/rules")
     @AuthAction(PrivilegeType.READ_RULE)
@@ -200,22 +200,26 @@ public class FlowControllerV2 {
 
         try {
             repository.delete(id);
-            publishRules(oldEntity.getApp());
-        } catch (Exception e) {
-            return Result.ofFail(-1, e.getMessage());
+        } catch (Throwable throwable) {
+            return Result.ofThrowable(-1, throwable);
         }
+
+		try {
+			publishRules(oldEntity.getApp());
+		} catch (Throwable throwable) {
+			return Result.ofThrowable(-1, throwable);
+		}
+
         return Result.ofSuccess(id);
     }
 
 	private List<FlowRuleEntity> getRules(String app) throws Exception {
-		return dynamicRuleProvider.getRules(MachineEntity.builder().app(app).build());
+		return ruleProvider.getRules(MachineEntity.builder().app(app).build());
 	}
 
 	private void publishRules(String app) {
 		List<FlowRuleEntity> rules = repository.findAllByApp(app);
-//         return rulePublisher.publish(app, rules);
-		try {
-			dynamicRulePublisher.publish(MachineEntity.builder().app(app).build(), rules);
+		rulePublisher.publish(MachineEntity.builder().app(app).build(), rules);
 		} catch (Exception e) {
 			logger.error("Publish flow rules failed after rule delete", e);
 		}

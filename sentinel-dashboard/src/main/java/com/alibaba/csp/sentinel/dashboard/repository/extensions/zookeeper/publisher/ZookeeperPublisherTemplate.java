@@ -17,7 +17,7 @@ package com.alibaba.csp.sentinel.dashboard.repository.extensions.zookeeper.publi
 
 import com.alibaba.csp.sentinel.dashboard.config.rule.ZookeeperRuleProperties;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRulePublisher;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RulePublisher;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.csp.sentinel.util.AssertUtil;
 import org.apache.curator.framework.CuratorFramework;
@@ -35,7 +35,7 @@ import java.util.List;
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public abstract class ZookeeperPublisherTemplate<T> implements DynamicRulePublisher<List<T>> {
+public abstract class ZookeeperPublisherTemplate<T> implements RulePublisher<List<T>> {
 
 	private static final Logger log = LoggerFactory.getLogger(ZookeeperPublisherTemplate.class);
 

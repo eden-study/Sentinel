@@ -15,10 +15,17 @@
  */
 package com.alibaba.csp.sentinel.dashboard.config.rule;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.ApiDefinitionEntity;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.*;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.provider.GatewayApiNacosProvider;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.provider.GatewayFlowRuleNacosProvider;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.publisher.GatewayApiNacosPublisher;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.publisher.GatewayFlowRuleNacosPublisher;
 import com.alibaba.csp.sentinel.dashboard.repository.extensions.zookeeper.provider.*;
 import com.alibaba.csp.sentinel.dashboard.repository.extensions.zookeeper.publisher.*;
 import com.alibaba.csp.sentinel.datasource.Converter;
+import com.alibaba.nacos.api.config.ConfigService;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
@@ -117,5 +124,29 @@ public class ZookeeperRuleAutoConfiguration {
 	public SystemRuleZookeeperPublisher systemRuleNacosPublisher(
 		CuratorFramework zkClient, Converter<List<SystemRuleEntity>, String> converter) {
 		return new SystemRuleZookeeperPublisher(zookeeperRuleProperties, zkClient, converter);
+	}
+
+	@Bean
+	public GatewayApiZookeeperProvider gatewayApiZookeeperProvider(
+		CuratorFramework zkClient, Converter<String, List<ApiDefinitionEntity>> converter) {
+		return new GatewayApiZookeeperProvider(zookeeperRuleProperties, zkClient, converter);
+	}
+
+	@Bean
+	public GatewayApiZookeeperPublisher gatewayApiZookeeperPublisher(
+		CuratorFramework zkClient, Converter<List<ApiDefinitionEntity>, String> converter) {
+		return new GatewayApiZookeeperPublisher(zookeeperRuleProperties, zkClient, converter);
+	}
+
+	@Bean
+	public GatewayFlowRuleZookeeperProvider gatewayFlowRuleZookeeperProvider(
+		CuratorFramework zkClient, Converter<String, List<GatewayFlowRuleEntity>> converter) {
+		return new GatewayFlowRuleZookeeperProvider(zookeeperRuleProperties, zkClient, converter);
+	}
+
+	@Bean
+	public GatewayFlowRuleZookeeperPublisher gatewayFlowRuleZookeeperPublisher(
+		CuratorFramework zkClient, Converter<List<GatewayFlowRuleEntity>, String> converter) {
+		return new GatewayFlowRuleZookeeperPublisher(zookeeperRuleProperties, zkClient, converter);
 	}
 }

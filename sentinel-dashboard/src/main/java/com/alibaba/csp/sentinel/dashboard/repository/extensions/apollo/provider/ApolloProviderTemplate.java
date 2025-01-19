@@ -17,7 +17,7 @@ package com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.provider
 
 import com.alibaba.csp.sentinel.dashboard.config.rule.ApolloRuleProperties;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRuleProvider;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RuleProvider;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.csp.sentinel.util.StringUtil;
 import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
@@ -31,7 +31,7 @@ import java.util.List;
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public abstract class ApolloProviderTemplate<T> implements DynamicRuleProvider<List<T>> {
+public abstract class ApolloProviderTemplate<T> implements RuleProvider<List<T>> {
 
 	private final ApolloRuleProperties apolloRuleProperties;
 

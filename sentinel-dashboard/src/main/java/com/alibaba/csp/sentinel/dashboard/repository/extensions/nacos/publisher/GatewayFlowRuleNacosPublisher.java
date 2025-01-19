@@ -13,49 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.provider;
+package com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.publisher;
 
 import com.alibaba.csp.sentinel.dashboard.config.rule.NacosRuleProperties;
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.RuleProvider;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.nacos.NacosRuleUtils;
 import com.alibaba.csp.sentinel.datasource.Converter;
-import com.alibaba.csp.sentinel.util.StringUtil;
 import com.alibaba.nacos.api.config.ConfigService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public abstract class NacosProviderTemplate<T> implements RuleProvider<List<T>> {
+public class GatewayFlowRuleNacosPublisher extends NacosPublisherTemplate<GatewayFlowRuleEntity> {
 
 	private final NacosRuleProperties nacosRuleProperties;
 
-	private final ConfigService configService;
-
-	private final Converter<String, List<T>> converter;
-
-	public NacosProviderTemplate(
+	public GatewayFlowRuleNacosPublisher(
 		NacosRuleProperties nacosRuleProperties,
 		ConfigService configService,
-		Converter<String, List<T>> converter) {
+		Converter<List<GatewayFlowRuleEntity>, String> converter) {
+		super(nacosRuleProperties, configService, converter);
 		this.nacosRuleProperties = nacosRuleProperties;
-		this.configService = configService;
-		this.converter = converter;
 	}
 
 	@Override
-	public List<T> getRules(MachineEntity machineEntity) throws Exception {
-		String rules =
-			configService.getConfig(
-				getDataId(machineEntity.getApp()), nacosRuleProperties.getGroupId(), 3000);
-		if (StringUtil.isEmpty(rules)) {
-			return new ArrayList<>();
-		}
-		return converter.convert(rules);
+	public String getDataId(String app) {
+		return NacosRuleUtils.getDataId(app, nacosRuleProperties.getDataIdSuffix().getGatewayFlowRule());
 	}
-
-	public abstract String getDataId(String app);
 }

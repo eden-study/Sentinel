@@ -24,8 +24,8 @@ import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
 import com.alibaba.csp.sentinel.dashboard.repository.rule.RuleRepository;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRuleProvider;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRulePublisher;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RuleProvider;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RulePublisher;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 import com.alibaba.csp.sentinel.util.StringUtil;
 import com.alibaba.nacos.api.exception.NacosException;
@@ -55,10 +55,10 @@ public class AuthorityRuleController {
     private AppManagement appManagement;
 
 	@Autowired
-	private DynamicRuleProvider<List<AuthorityRuleEntity>> dynamicRuleProvider;
+	private RuleProvider<List<AuthorityRuleEntity>> ruleProvider;
 
 	@Autowired
-	private DynamicRulePublisher<List<AuthorityRuleEntity>> dynamicRulePublisher;
+	private RulePublisher<List<AuthorityRuleEntity>> rulePublisher;
 
     @GetMapping("/rules")
     @AuthAction(PrivilegeType.READ_RULE)
@@ -132,10 +132,19 @@ public class AuthorityRuleController {
         try {
             entity = repository.save(entity);
         } catch (Throwable throwable) {
-            logger.error("Failed to add authority rule", throwable);
+            logger.error("Failed to add new authority rule, app={}, ip={}",
+				entity.getApp(), entity.getIp(), throwable);
             return Result.ofThrowable(-1, throwable);
         }
-        publishRules(entity.getApp(), entity.getIp(), entity.getPort());
+
+		try {
+			publishRules(entity.getApp(), entity.getIp(), entity.getPort());
+		} catch (Throwable throwable) {
+			logger.error("Publish authority rules fail after add, app={}, ip={}",
+				entity.getApp(), entity.getIp(), throwable);
+			return Result.ofThrowable(-1, throwable);
+		}
+
         return Result.ofSuccess(entity);
     }
 
@@ -160,10 +169,19 @@ public class AuthorityRuleController {
                 return Result.ofFail(-1, "Failed to save authority rule");
             }
         } catch (Throwable throwable) {
-            logger.error("Failed to save authority rule", throwable);
+            logger.error("Failed to save authority rule, id={}, rule={}",
+				id, entity, throwable);
             return Result.ofThrowable(-1, throwable);
         }
-        publishRules(entity.getApp(), entity.getIp(), entity.getPort());
+
+		try {
+			publishRules(entity.getApp(), entity.getIp(), entity.getPort());
+		} catch (Throwable throwable) {
+			logger.error("Publish authority rules fail after update, id={}, rule={}",
+				id, entity, throwable);
+			return Result.ofThrowable(-1, throwable);
+		}
+
         return Result.ofSuccess(entity);
     }
 
@@ -177,26 +195,32 @@ public class AuthorityRuleController {
         if (oldEntity == null) {
             return Result.ofSuccess(null);
         }
-        try {
-            repository.delete(id);
-        } catch (Exception e) {
-            return Result.ofFail(-1, e.getMessage());
-        }
-        publishRules(oldEntity.getApp(), oldEntity.getIp(), oldEntity.getPort());
+
+		try {
+			repository.delete(id);
+		} catch (Throwable throwable) {
+			logger.error("Failed to delete authority rule, id={}, rule={}",
+				id, oldEntity, throwable);
+			return Result.ofThrowable(-1, throwable);
+		}
+
+		try {
+			publishRules(oldEntity.getApp(), oldEntity.getIp(), oldEntity.getPort());
+		} catch (Throwable throwable) {
+			logger.error("Publish authority rules fail after delete, id={}, rule={}",
+				id, oldEntity, throwable);
+			return Result.ofThrowable(-1, throwable);
+		}
+
         return Result.ofSuccess(id);
     }
 
 	private List<AuthorityRuleEntity> getRules(String app, String ip, Integer port) throws Exception {
-		return dynamicRuleProvider.getRules(MachineEntity.builder().app(app).ip(ip).port(port).build());
+		return ruleProvider.getRules(MachineEntity.builder().app(app).ip(ip).port(port).build());
 	}
 
-    private void publishRules(String app, String ip, Integer port) {
+    private void publishRules(String app, String ip, Integer port) throws Exception {
         List<AuthorityRuleEntity> rules = repository.findAllByMachine(MachineInfo.of(app, ip, port));
-//        return sentinelApiClient.setAuthorityRuleOfMachine(app, ip, port, rules);
-		try {
-			dynamicRulePublisher.publish(MachineEntity.builder().app(app).ip(ip).port(port).build(), rules);
-		} catch (Exception e) {
-			logger.error("Publish authority rules failed after rule delete", e);
-		}
+		rulePublisher.publish(MachineEntity.builder().app(app).ip(ip).port(port).build(), rules);
 	}
 }

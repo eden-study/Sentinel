@@ -91,4 +91,24 @@ public class MemoryRuleAutoConfiguration {
 	public SystemRuleMemoryPublisher systemRuleApiPublisher() {
 		return new SystemRuleMemoryPublisher(appManagement, sentinelApiClient);
 	}
+
+	@Bean
+	public GatewayApiMemoryProvider gatewayApiMemoryProvider() {
+		return new GatewayApiMemoryProvider(appManagement, sentinelApiClient);
+	}
+
+	@Bean
+	public GatewayApiMemoryPublisher gatewayApiMemoryPublisher() {
+		return new GatewayApiMemoryPublisher(appManagement, sentinelApiClient);
+	}
+
+	@Bean
+	public GatewayFlowRuleMemoryProvider gatewayFlowRuleMemoryProvider() {
+		return new GatewayFlowRuleMemoryProvider(appManagement, sentinelApiClient);
+	}
+
+	@Bean
+	public GatewayFlowRuleMemoryPublisher gatewayFlowRuleMemoryPublisher() {
+		return new GatewayFlowRuleMemoryPublisher(appManagement, sentinelApiClient);
+	}
 }

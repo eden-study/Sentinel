@@ -16,56 +16,33 @@
 package com.alibaba.csp.sentinel.dashboard.repository.extensions.zookeeper.provider;
 
 import com.alibaba.csp.sentinel.dashboard.config.rule.ZookeeperRuleProperties;
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.RuleProvider;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.FlowRuleEntity;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.zookeeper.ZookeeperRuleUtils;
 import com.alibaba.csp.sentinel.datasource.Converter;
-import com.alibaba.csp.sentinel.util.AssertUtil;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.zookeeper.data.Stat;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Zookeeper 拉取规则模板
- *
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public abstract class ZookeeperProviderTemplate<T> implements RuleProvider<List<T>> {
+public class GatewayFlowRuleZookeeperProvider extends ZookeeperProviderTemplate<GatewayFlowRuleEntity> {
 
 	private final ZookeeperRuleProperties zookeeperRuleProperties;
 
-	private final CuratorFramework zkClient;
-
-	private final Converter<String, List<T>> converter;
-
-	public ZookeeperProviderTemplate(
+	public GatewayFlowRuleZookeeperProvider(
 		ZookeeperRuleProperties zookeeperRuleProperties,
 		CuratorFramework zkClient,
-		Converter<String, List<T>> converter) {
+		Converter<String, List<GatewayFlowRuleEntity>> converter) {
+		super(zookeeperRuleProperties, zkClient, converter);
 		this.zookeeperRuleProperties = zookeeperRuleProperties;
-		this.zkClient = zkClient;
-		this.converter = converter;
 	}
 
 	@Override
-	public List<T> getRules(MachineEntity machineEntity) throws Exception {
-		AssertUtil.notNull(machineEntity, "machineEntity cannot be null");
-
-		String path = getPath(machineEntity.getApp());
-		Stat stat = zkClient.checkExists().forPath(path);
-		if (stat == null) {
-			return new ArrayList<>(0);
-		}
-		byte[] bytes = zkClient.getData().forPath(path);
-		if (null == bytes || bytes.length == 0) {
-			return new ArrayList<>();
-		}
-		String s = new String(bytes);
-
-		return converter.convert(s);
+	public String getPath(String app) {
+		return ZookeeperRuleUtils.getPath(zookeeperRuleProperties.getRootPath(), app,
+			zookeeperRuleProperties.getRulePath().getGatewayFlowRule());
 	}
-
-	public abstract String getPath(String app);
 }

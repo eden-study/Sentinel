@@ -25,8 +25,8 @@ import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
 import com.alibaba.csp.sentinel.dashboard.repository.rule.RuleRepository;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRuleProvider;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRulePublisher;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RuleProvider;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RulePublisher;
 import com.alibaba.csp.sentinel.dashboard.util.VersionUtils;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 import com.alibaba.csp.sentinel.util.StringUtil;
@@ -59,10 +59,10 @@ public class ParamFlowRuleController {
     private RuleRepository<ParamFlowRuleEntity, Long> repository;
 
 	@Autowired
-	private DynamicRuleProvider<List<ParamFlowRuleEntity>> dynamicRuleProvider;
+	private RuleProvider<List<ParamFlowRuleEntity>> ruleProvider;
 
 	@Autowired
-	private DynamicRulePublisher<List<ParamFlowRuleEntity>> dynamicRulePublisher;
+	private RulePublisher<List<ParamFlowRuleEntity>> rulePublisher;
 
     private boolean checkIfSupported(String app, String ip, int port) {
         try {
@@ -261,16 +261,11 @@ public class ParamFlowRuleController {
     }
 
 	private List<ParamFlowRuleEntity> getRules(String app, String ip, Integer port) throws Exception {
-		return dynamicRuleProvider.getRules(MachineEntity.builder().app(app).ip(ip).port(port).build());
+		return ruleProvider.getRules(MachineEntity.builder().app(app).ip(ip).port(port).build());
 	}
 
-	private void publishRules(String app, String ip, Integer port) {
+	private void publishRules(String app, String ip, Integer port) throws Exception {
 		List<ParamFlowRuleEntity> rules = repository.findAllByMachine(MachineInfo.of(app, ip, port));
-//         return sentinelApiClient.setParamFlowRuleOfMachine(app, ip, port, rules);
-		try {
-			dynamicRulePublisher.publish(MachineEntity.builder().app(app).ip(ip).port(port).build(), rules);
-		} catch (Exception e) {
-			logger.error("Publish param flow rules failed after rule delete", e);
-		}
+		rulePublisher.publish(MachineEntity.builder().app(app).ip(ip).port(port).build(), rules);
 	}
 }

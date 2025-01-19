@@ -1,5 +1,7 @@
 package com.alibaba.csp.sentinel.dashboard.config.rule;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.ApiDefinitionEntity;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.gateway.GatewayFlowRuleEntity;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.*;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.fastjson.JSON;
@@ -115,5 +117,45 @@ public class RuleConverterAutoConfiguration {
 	@Bean
 	public Converter<String, List<SystemRuleEntity>> systemRuleEntityDecoder() {
 		return s -> JSON.parseArray(s, SystemRuleEntity.class);
+	}
+
+	/**
+	 * 网关API参数规则实体编码器
+	 *
+	 * @return Converter
+	 */
+	@Bean
+	public Converter<List<ApiDefinitionEntity>, String> gatewayApiEntityEncoder() {
+		return JSON::toJSONString;
+	}
+
+	/**
+	 * 网关API参数规则实体解码器
+	 *
+	 * @return Converter
+	 */
+	@Bean
+	public Converter<String, List<ApiDefinitionEntity>> gatewayApiEntityDecoder() {
+		return s -> JSON.parseArray(s, ApiDefinitionEntity.class);
+	}
+
+	/**
+	 * 网关流控规则规则实体编码器
+	 *
+	 * @return Converter
+	 */
+	@Bean
+	public Converter<List<GatewayFlowRuleEntity>, String> gatewayFlowRuleEntityEncoder() {
+		return JSON::toJSONString;
+	}
+
+	/**
+	 * 网关流控规则规则实体解码器
+	 *
+	 * @return Converter
+	 */
+	@Bean
+	public Converter<String, List<GatewayFlowRuleEntity>> gatewayFlowRuleEntityDecoder() {
+		return s -> JSON.parseArray(s, GatewayFlowRuleEntity.class);
 	}
 }

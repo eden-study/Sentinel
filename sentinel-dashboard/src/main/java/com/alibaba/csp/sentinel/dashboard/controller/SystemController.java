@@ -24,8 +24,8 @@ import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
 import com.alibaba.csp.sentinel.dashboard.repository.rule.RuleRepository;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRuleProvider;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRulePublisher;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RuleProvider;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RulePublisher;
 import com.alibaba.csp.sentinel.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,10 +54,10 @@ public class SystemController {
     private AppManagement appManagement;
 
 	@Autowired
-	private DynamicRuleProvider<List<SystemRuleEntity>> dynamicRuleProvider;
+	private RuleProvider<List<SystemRuleEntity>> ruleProvider;
 
 	@Autowired
-	private DynamicRulePublisher<List<SystemRuleEntity>> dynamicRulePublisher;
+	private RulePublisher<List<SystemRuleEntity>> rulePublisher;
 
     private <R> Result<R> checkBasicParams(String app, String ip, Integer port) {
         if (StringUtil.isEmpty(app)) {
@@ -163,10 +163,19 @@ public class SystemController {
         try {
             entity = repository.save(entity);
         } catch (Throwable throwable) {
-            logger.error("Add SystemRule error", throwable);
+			logger.error("Failed to add new system rule, app={}, ip={}",
+				entity.getApp(), entity.getIp(), throwable);
             return Result.ofThrowable(-1, throwable);
         }
-        publishRules(app, ip, port);
+
+		try {
+			publishRules(entity.getApp(), entity.getIp(), entity.getPort());
+		} catch (Throwable throwable) {
+			logger.error("Publish system rules fail after add, app={}, ip={}",
+				entity.getApp(), entity.getIp(), throwable);
+			return Result.ofThrowable(-1, throwable);
+		}
+
         return Result.ofSuccess(entity);
     }
 
@@ -222,11 +231,23 @@ public class SystemController {
         entity.setGmtModified(date);
         try {
             entity = repository.save(entity);
+			if (entity == null) {
+				return Result.ofFail(-1, "Failed to save system rule");
+			}
         } catch (Throwable throwable) {
-            logger.error("save error:", throwable);
+			logger.error("Failed to save system rule, id={}, rule={}",
+				id, entity, throwable);
             return Result.ofThrowable(-1, throwable);
         }
-        publishRules(entity.getApp(), entity.getIp(), entity.getPort());
+
+		try {
+			publishRules(entity.getApp(), entity.getIp(), entity.getPort());
+		} catch (Throwable throwable) {
+			logger.error("Publish system rules fail after update, id={}, rule={}",
+				id, entity, throwable);
+			return Result.ofThrowable(-1, throwable);
+		}
+
         return Result.ofSuccess(entity);
     }
 
@@ -243,24 +264,28 @@ public class SystemController {
         try {
             repository.delete(id);
         } catch (Throwable throwable) {
-            logger.error("delete error:", throwable);
+			logger.error("Failed to delete system rule, id={}, rule={}",
+				id, oldEntity, throwable);
             return Result.ofThrowable(-1, throwable);
         }
-        publishRules(oldEntity.getApp(), oldEntity.getIp(), oldEntity.getPort());
-        return Result.ofSuccess(id);
+
+		try {
+			publishRules(oldEntity.getApp(), oldEntity.getIp(), oldEntity.getPort());
+		} catch (Throwable throwable) {
+			logger.error("Publish system rules fail after delete, id={}, rule={}",
+				id, oldEntity, throwable);
+			return Result.ofThrowable(-1, throwable);
+		}
+
+		return Result.ofSuccess(id);
     }
 
 	private List<SystemRuleEntity> getRules(String app, String ip, Integer port) throws Exception {
-		return dynamicRuleProvider.getRules(MachineEntity.builder().app(app).ip(ip).port(port).build());
+		return ruleProvider.getRules(MachineEntity.builder().app(app).ip(ip).port(port).build());
 	}
 
-	private void publishRules(String app, String ip, Integer port) {
+	private void publishRules(String app, String ip, Integer port) throws Exception {
 		List<SystemRuleEntity> rules = repository.findAllByMachine(MachineInfo.of(app, ip, port));
-//		return sentinelApiClient.setSystemRuleOfMachine(app, ip, port, rules);
-		try {
-			dynamicRulePublisher.publish(MachineEntity.builder().app(app).ip(ip).port(port).build(), rules);
-		} catch (Exception e) {
-			logger.error("Publish system rules failed after rule delete", e);
-		}
+		rulePublisher.publish(MachineEntity.builder().app(app).ip(ip).port(port).build(), rules);
 	}
 }

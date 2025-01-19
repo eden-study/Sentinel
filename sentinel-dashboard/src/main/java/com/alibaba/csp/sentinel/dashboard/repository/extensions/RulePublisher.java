@@ -23,7 +23,7 @@ import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public interface DynamicRulePublisher<T> {
+public interface RulePublisher<T> {
 
 	void publish(MachineEntity machineEntity, T rules) throws Exception;
 }

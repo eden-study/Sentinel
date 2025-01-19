@@ -17,7 +17,7 @@ package com.alibaba.csp.sentinel.dashboard.repository.extensions.apollo.publishe
 
 import com.alibaba.csp.sentinel.dashboard.config.rule.ApolloRuleProperties;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.MachineEntity;
-import com.alibaba.csp.sentinel.dashboard.repository.extensions.DynamicRulePublisher;
+import com.alibaba.csp.sentinel.dashboard.repository.extensions.RulePublisher;
 import com.alibaba.csp.sentinel.datasource.Converter;
 import com.alibaba.csp.sentinel.util.AssertUtil;
 import com.ctrip.framework.apollo.openapi.client.ApolloOpenApiClient;
@@ -33,7 +33,7 @@ import java.util.List;
  * @author <a href="mailto:shiyindaxiaojie@gmail.com">gyl</a>
  * @since 1.8.2
  */
-public abstract class ApolloPublisherTemplate<T> implements DynamicRulePublisher<List<T>> {
+public abstract class ApolloPublisherTemplate<T> implements RulePublisher<List<T>> {
 
 	private static final Logger log = LoggerFactory.getLogger(ApolloPublisherTemplate.class);
 
